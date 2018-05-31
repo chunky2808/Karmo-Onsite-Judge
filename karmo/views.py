@@ -96,12 +96,19 @@ def take_input(request):
 			dir_path = BASE_DIR + '/code_compile'
 			if not os.path.exists(dir_path):
 				os.makedirs(dir_path, 0o777)
-			
+			file2write=open('/home/paras/Desktop/coding/my-project/Judge/code_compile/%s.cpp'%p,'w')
+			file2write.write(code.code)
+			file2write.close()
+			file_path = '/home/paras/Desktop/coding/my-project/Judge/code_compile/%s.cpp'%p
 			if code.language=='c++' or code.language=='C++':
-				cmd = 'g++ code.code'
-				subprocess.call(cmd, shell=True)
-
-			return HttpResponse("ok")
+				cmd = 'g++ %s'%file_path
+				status = subprocess.call(cmd, shell=True)
+				if(status==1):
+					print("Compilation Error")
+					return HttpResponse("Compilation Error")
+				else:
+					print("Running Successfully")	
+					return HttpResponse("Running Successfully")
 	else:
 		form = NewTopicForm3()
 	return render(request, 'code_snippet.html', {'form' : form})

@@ -34,6 +34,6 @@ class Question(models.Model):
 class Code_Snippet(models.Model):
 	code = models.TextField()
 	language = models.CharField(default = '',max_length=224)
-
+	
 	def __str__(self):
 		return self.code
