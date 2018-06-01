@@ -4,7 +4,7 @@ from .models import Contest,Question,Code_Snippet
 class NewTopicForm(forms.ModelForm):
     class Meta:
         model = Contest
-        fields = ['Name','Desc','Timings','language_accepted','url_code']
+        fields = ['Name','Desc','date','Timings','language_accepted','url_code']
 
 
 class NewTopicForm2(forms.ModelForm):

@@ -8,10 +8,11 @@ from src import settings
 class Contest(models.Model):
 	Name = models.TextField(max_length=4000)
 	Desc = models.TextField(max_length = 4000)
-	Timings = models.DateTimeField()
+	Timings = models.CharField(max_length=244)
 	created_by = models.ForeignKey(User,related_name = 'cont_created_by')
 	language_accepted = models.TextField(max_length = 4000)
 	url_code  = models.TextField(null=True)
+	date = models.CharField(max_length=244)
 
 	def __str__(self):
 		return self.Name

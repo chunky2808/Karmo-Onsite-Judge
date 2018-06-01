@@ -9,6 +9,10 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import Code_Snippet
 from src.settings import *
 
+#g++ -o output_file input_file
+
+
+
 #C++
 def hii(request):
 	
@@ -114,4 +118,31 @@ def take_input(request):
 	return render(request, 'code_snippet.html', {'form' : form})
 
 
+@csrf_exempt
+def create_contest(request):
+	if request.method == 'POST':
+		form = NewTopicForm(request.POST)
+		if form.is_valid():
+			new = form.save(commit=False)
+			print(request.user)
+			new.created_by = request.user
+			new.save()
+			return HttpResponse("Running Successfully")
+	else:
+		form = NewTopicForm()
+	return render(request, 'create_contest.html', {'form' : form})
 
+
+@csrf_exempt
+def create_question(request):
+	if request.method == 'POST':
+		form = NewTopicForm(request.POST)
+		if form.is_valid():
+			new = form.save(commit=False)
+			print(request.user)
+			new.created_by = request.user
+			new.save()
+			return HttpResponse("Running Successfully")
+	else:
+		form = NewTopicForm()
+	return render(request, 'create_contest.html', {'form' : form})
