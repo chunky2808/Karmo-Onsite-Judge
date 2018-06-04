@@ -9,6 +9,12 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import Code_Snippet
 from src.settings import *
 
+from django.core.files.base import ContentFile
+
+
+from django.core.files.storage import default_storage
+
+
 #g++ -o output_file input_file
 
 import os 
@@ -128,9 +134,17 @@ def create_contest(request):
 			new = form.save(commit=False)
 			print(request.user)
 			new.created_by = request.user
-			cmd = 'mkdir %s'%BASE_DIR + 'Contest'+ '/%s'%new.Name
+			cmd = 'mkdir %s'%BASE_DIR + '/Contest'+ '/%s'%new.Name
 			print(cmd)
 			subprocess.call(cmd, shell=True)
+
+			cmd = 'mkdir %s'%BASE_DIR + '/Contest'+ '/%s'%new.Name + '/code_compile'
+			subprocess.call(cmd, shell=True)
+
+
+			cmd = 'mkdir %s'%BASE_DIR + '/Contest'+ '/%s'%new.Name + '/testcases'
+			subprocess.call(cmd, shell=True)
+
 			new.save()
 			return HttpResponse("Contest created Successfully")
 	else:
@@ -145,7 +159,7 @@ def create_question(request):
 		if form.is_valid():
 			new = form.save(commit=False)
 			print(request.user)
-			cmd = 'mkdir %s/'%BASE_DIR + '/Contest'+ '/%s'%new.contest + '/%s'%new.Name
+			cmd = 'mkdir %s/'%BASE_DIR + '/Contest'+ '/%s'%new.contest  + '/code_compile' +'/%s'%new.Name
 			print(cmd)
 			subprocess.call(cmd, shell=True)
 			new.created_by = request.user
@@ -155,3 +169,20 @@ def create_question(request):
 	else:
 		form = NewTopicForm2()
 	return render(request, 'create_question.html', {'form' : form})
+
+
+def testcase(request):
+	return render(request, 'upload_testcase.html')
+
+def testcase_main(request):
+	if request.method == 'POST':
+		files = request.FILES.getlist("file")
+		folder = BASE_DIR + '/Contest/' + '/Enigma18.1/output'
+		f=0
+		for files in files:
+			if f==0:#input file
+				default_storage.save(folder + '/' + files.name +".txt", ContentFile(files.read()))
+			else:
+				default_storage.save(folder + '/' + files.name +".txt", ContentFile(files.read()))	
+			print(files)
+	return HttpResponse("hi")	

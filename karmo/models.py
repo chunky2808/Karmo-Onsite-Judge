@@ -41,3 +41,9 @@ class Code_Snippet(models.Model):
 	
 	def __str__(self):
 		return self.code
+
+# class Testcase(models.Model):
+# 	contest = models.ForeignKey(Contest,related_name='testcase_contest')
+# 	question = models.ForeignKey(Question,related_name = 'testcase_ques')
+# 	inpt = models.FileField(upload_to='documents/%Y/%m/%d')
+# 	outp = models.FileField(upload_to='documents/%Y/%m/%d')

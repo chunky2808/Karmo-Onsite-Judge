@@ -1,0 +1,23 @@
+<html>
+<head>
+</head>
+<body>
+ <form method="post" action="/testcase_main/" enctype="multipart/form-data" id="forms_upload">
+{% csrf_token %}
+<div class="form-group row required">
+
+        <label class="col-sm-4 col-sm-offset-1">Upload  Input Testcase</label>
+    <div class="col-sm-4"><input type="file" name="file" multiple/></div>
+
+
+        <label class="col-sm-4 col-sm-offset-1">Upload Output Testcase</label>
+    <div class="col-sm-4"><input type="file" name="file" multiple/></div>
+
+<div class="form-group row required">
+   <button class="btn btn-default" type="submit">Upload File</button><br>
+</div>
+
+</div>
+ </form>
+</body>
+</html>
