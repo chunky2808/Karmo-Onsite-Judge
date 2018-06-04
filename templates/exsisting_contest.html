@@ -1,0 +1,10 @@
+<html>
+<head>
+	<body>
+		{% for contest in contest %}
+		<a href = "{% url 'problem' contest.id %}">{{contest.Name}}</a>
+		<br></br>
+		{% endfor %}
+	</body>
+</head>
+</html>

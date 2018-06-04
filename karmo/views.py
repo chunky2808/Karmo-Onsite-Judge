@@ -205,3 +205,18 @@ def run_file():
 	#running
 
 #Function to run file
+
+
+
+
+def exsisting_contest(request):
+	contest = Contest.objects.all()
+	return render(request,'exsisting_contest.html',{'contest':contest})
+
+
+def problem(request,pk):
+	print("hi")
+	print(pk)
+	question = Question.objects.get(contest=pk)
+	print(question)
+	return render(request,'problem.html',{'question':question})
