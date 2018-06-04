@@ -146,6 +146,7 @@ def create_question(request):
 			new = form.save(commit=False)
 			print(request.user)
 			new.created_by = request.user
+
 			new.save()
 			return HttpResponse("Running Successfully")
 	else:
