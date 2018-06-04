@@ -11,7 +11,9 @@ from src.settings import *
 
 #g++ -o output_file input_file
 
-
+import os 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+print(BASE_DIR)
 
 #C++
 def hii(request):
@@ -126,8 +128,11 @@ def create_contest(request):
 			new = form.save(commit=False)
 			print(request.user)
 			new.created_by = request.user
+			cmd = 'mkdir %s/'%BASE_DIR + '/Contest'+ '/%s'%new.Name
+			print(cmd)
+			subprocess.call(cmd, shell=True)
 			new.save()
-			return HttpResponse("Running Successfully")
+			return HttpResponse("Contest created Successfully")
 	else:
 		form = NewTopicForm()
 	return render(request, 'create_contest.html', {'form' : form})

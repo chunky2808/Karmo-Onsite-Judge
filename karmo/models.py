@@ -6,7 +6,7 @@ from src import settings
 
 
 class Contest(models.Model):
-	Name = models.TextField(max_length=4000)
+	Name = models.TextField(max_length=4000,unique=True)
 	Desc = models.TextField(max_length = 4000)
 	Timings = models.CharField(max_length=244)
 	created_by = models.ForeignKey(User,related_name = 'cont_created_by')
@@ -16,6 +16,9 @@ class Contest(models.Model):
 
 	def __str__(self):
 		return self.Name
+
+	def __unicode__(self):
+		return self.Name.replace('_', ' ')	
 
 
 
