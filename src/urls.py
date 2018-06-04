@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-from karmo.views import hi,take_input,create_contest,create_question,testcase,testcase_main,hii
+from karmo.views import hi,take_input,create_contest,create_question,testcase,testcase_main,hii,match_testcase
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -26,5 +26,6 @@ urlpatterns = [
     url(r'^create_question/',create_question,name= 'create_question'),
     url(r'^testcase/',testcase,name= 'testcase'),
     url(r'^testcase_main/',testcase_main,name= 'testcase_main'),
+    url(r'^match_testcase/',match_testcase,name= 'match_testcase'),
 
 ]

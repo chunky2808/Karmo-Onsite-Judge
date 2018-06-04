@@ -34,10 +34,10 @@ def hii(request):
 	else:
 		print(subprocess.check_output(cmd, shell=True))
 		print("Error")
-	match_testcase()
+	generate_input()
 
 
-def match_testcase():
+def generate_input():
 	startTime = datetime.now()
 	cmd = './a.out < /home/paras/Desktop/coding/my-project/Judge/input.txt > result.txt' #running a c++ program(name of file)
 
@@ -55,6 +55,19 @@ def match_testcase():
 	#running
 #C++
 #Compiling,Running file and taking input as a file and generating output in file result.txt
+
+
+#checking difference of ouptput file of two files
+def match_testcase(request):
+	cmd = "diff result.txt true_result.txt"
+	p = subprocess.call(cmd,shell=True)
+	if p==0:
+		return HttpResponse("Successfully running")
+	else:
+		print("Error")
+		return HttpResponse("WA")
+	
+#checking difference of ouptput file of two files
 
 
 
