@@ -128,7 +128,7 @@ def create_contest(request):
 			new = form.save(commit=False)
 			print(request.user)
 			new.created_by = request.user
-			cmd = 'mkdir %s/'%BASE_DIR + '/Contest'+ '/%s'%new.Name
+			cmd = 'mkdir %s'%BASE_DIR + 'Contest'+ '/%s'%new.Name
 			print(cmd)
 			subprocess.call(cmd, shell=True)
 			new.save()
@@ -141,14 +141,17 @@ def create_contest(request):
 @csrf_exempt
 def create_question(request):
 	if request.method == 'POST':
-		form = NewTopicForm(request.POST)
+		form = NewTopicForm2(request.POST)
 		if form.is_valid():
 			new = form.save(commit=False)
 			print(request.user)
+			cmd = 'mkdir %s/'%BASE_DIR + '/Contest'+ '/%s'%new.contest + '/%s'%new.Name
+			print(cmd)
+			subprocess.call(cmd, shell=True)
 			new.created_by = request.user
 
 			new.save()
-			return HttpResponse("Running Successfully")
+			return HttpResponse("Question Created")
 	else:
-		form = NewTopicForm()
-	return render(request, 'create_contest.html', {'form' : form})
+		form = NewTopicForm2()
+	return render(request, 'create_question.html', {'form' : form})
