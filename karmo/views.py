@@ -21,6 +21,7 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 print(BASE_DIR)
 
+#Compiling,Running file and taking input as a file and generating output in file result.txt
 #C++
 def hii(request):
 	
@@ -33,30 +34,8 @@ def hii(request):
 	else:
 		print(subprocess.check_output(cmd, shell=True))
 		print("Error")
-
-	#compilation
-	run_file()
-	
-
-def run_file():
-	#running	
-
-	startTime = datetime.now()
-	cmd = './a.out' #running a c++ program(name of file)
-
-	#command to run code with input file ./test.exe input.txt
-	
-	p = subprocess.call(cmd, shell=True)
-	if p==0:
-		print("Successfully running")
-	else:
-		print(subprocess.check_output(cmd, shell=True))
-		print("Error")
-
-	print("Time taken in Judging")
-	print(datetime.now() - startTime)
-	#running
 	match_testcase()
+
 
 def match_testcase():
 	startTime = datetime.now()
@@ -75,6 +54,8 @@ def match_testcase():
 	print(datetime.now() - startTime)
 	#running
 #C++
+#Compiling,Running file and taking input as a file and generating output in file result.txt
+
 
 
 #Python
@@ -171,6 +152,7 @@ def create_question(request):
 	return render(request, 'create_question.html', {'form' : form})
 
 
+#Upload Input,Output Testcase for a question in a particular contest
 def testcase(request):
 	return render(request, 'upload_testcase.html')
 
@@ -186,3 +168,27 @@ def testcase_main(request):
 				default_storage.save(folder + '/' + files.name +".txt", ContentFile(files.read()))	
 			print(files)
 	return HttpResponse("hi")	
+#Upload Input,Output Testcase for a question in a particular contest
+
+	
+#Function to run file
+def run_file():
+	#running	
+	print("hi")
+	startTime = datetime.now()
+	cmd = './a.out' #running a c++ program(name of file)
+
+	#command to run code with input file ./test.exe input.txt
+	
+	p = subprocess.call(cmd, shell=True)
+	if p==0:
+		print("Successfully running")
+	else:
+		print(subprocess.check_output(cmd, shell=True))
+		print("Error")
+
+	print("Time taken in Judging")
+	print(datetime.now() - startTime)
+	#running
+
+#Function to run file
