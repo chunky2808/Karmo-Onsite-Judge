@@ -128,15 +128,8 @@ def create_contest(request):
 			new = form.save(commit=False)
 			print(request.user)
 			new.created_by = request.user
-			cmd = 'mkdir %s'%BASE_DIR + '/Contest'+ '/%s'%new.Name
+			cmd = 'mkdir %s'%BASE_DIR + '/Contest'+ '/%s'%new.Name#create folder for contest Name
 			print(cmd)
-			subprocess.call(cmd, shell=True)
-
-			cmd = 'mkdir %s'%BASE_DIR + '/Contest'+ '/%s'%new.Name + '/code_compile'
-			subprocess.call(cmd, shell=True)
-
-
-			cmd = 'mkdir %s'%BASE_DIR + '/Contest'+ '/%s'%new.Name + '/testcases'
 			subprocess.call(cmd, shell=True)
 
 			new.save()
@@ -153,9 +146,27 @@ def create_question(request):
 		if form.is_valid():
 			new = form.save(commit=False)
 			print(request.user)
-			cmd = 'mkdir %s/'%BASE_DIR + '/Contest'+ '/%s'%new.contest  + '/code_compile' +'/%s'%new.Name
-			print(cmd)
+			
+			cmd = 'mkdir %s/'%BASE_DIR + '/Contest'+ '/%s'%new.contest  +'/%s'%new.Name #create folder for question name in contest
 			subprocess.call(cmd, shell=True)
+			
+
+			cmd = 'mkdir %s/'%BASE_DIR + '/Contest'+ '/%s'%new.contest  +'/%s'%new.Name + '/code_compile' #create folder code_compile for question in a contest
+			subprocess.call(cmd, shell=True)
+
+
+			cmd = 'mkdir %s/'%BASE_DIR + '/Contest'+ '/%s'%new.contest  +'/%s'%new.Name + '/testcases' #create folder testcases for question in a contest
+			subprocess.call(cmd, shell=True)
+
+
+			cmd = 'mkdir %s/'%BASE_DIR + '/Contest'+ '/%s'%new.contest  +'/%s'%new.Name + '/question' #create folder question for question in a contest
+			subprocess.call(cmd, shell=True)
+
+
+			cmd = 'mkdir %s/'%BASE_DIR + '/Contest'+ '/%s'%new.contest  +'/%s'%new.Name + '/solution' #create folder solution for question in a contest 
+			subprocess.call(cmd, shell=True)
+
+			#new.Prob_statement =
 			new.created_by = request.user
 
 			new.save()
