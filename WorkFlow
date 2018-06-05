@@ -1,6 +1,6 @@
 When a contest is created by form , a folder(by name of contest name) is created in Contest (/contest/name-of-contest/).
-Corresponding to a single folder 4 folders are created 
-1) Questions in contest
+When a question is created 4 folders are created corresponding to that question(/contest/name-of-contest/question)
+1) Question in contest
 2) Solution of question of contest
 3) Testcases of questions of contest
 4) Compilation folder containing code submitted on question.

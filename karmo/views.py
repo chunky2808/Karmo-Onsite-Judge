@@ -166,7 +166,18 @@ def create_question(request):
 			cmd = 'mkdir %s/'%BASE_DIR + '/Contest'+ '/%s'%new.contest  +'/%s'%new.Name + '/solution' #create folder solution for question in a contest 
 			subprocess.call(cmd, shell=True)
 
-			#new.Prob_statement =
+			#write question to a file in local
+			file2write=open('%s'%BASE_DIR + '/Contest'+ '/%s'%new.contest  +'/%s'%new.Name + '/question' + '/%s.txt'%new.Prob_statement,'w')
+			file2write.write(new.Prob_statement)
+			file2write.close()
+			#write question to a file in local
+
+			#write question to a file in local
+			file2write=open('%s'%BASE_DIR + '/Contest'+ '/%s'%new.contest  +'/%s'%new.Name + '/question' + '/%s.txt'%new.Prob_statement,'w')
+			file2write.write(new.Prob_statement)
+			file2write.close()
+			#write question to a file in local
+
 			new.created_by = request.user
 
 			new.save()
