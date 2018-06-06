@@ -228,17 +228,24 @@ def run_file():
 
 #Function to run file
 
-
+#For single question
+def question(request,pk):
+	question = Question.objects.get(pk=pk)
+	print(question)
+	return render(request,'single_question.html',{'question':question})
+#For single question
 
 
 def exsisting_contest(request):
 	contest = Contest.objects.all()
+	print(contest)
 	return render(request,'exsisting_contest.html',{'contest':contest})
 
-
+#To display all questions
 def problem(request,pk):
 	print("hi")
 	print(pk)
-	question = Question.objects.get(contest=pk)
+	question = Question.objects.filter(contest=pk)
 	print(question)
-	return render(request,'problem.html',{'question':question})
+	return render(request,'problem.html',{'problem':question})
+#To display all questions	
