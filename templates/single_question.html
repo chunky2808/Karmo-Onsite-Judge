@@ -10,6 +10,9 @@
 	{{question.no_of_submission}}<br>
 	{{question.created_by}}<br>
 
+
+	<a href = "{% url 'testcase' contest.pk question.pk %}" ><button type="button" class="btn btn-primary">Upload TestCase</button></a>
+
 	<a href = "{% url 'submit_contest' contest.pk question.pk %}" ><button type="button" class="btn btn-primary">Submit</button></a>
 
 </body>

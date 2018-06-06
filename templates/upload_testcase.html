@@ -2,7 +2,7 @@
 <head>
 </head>
 <body>
- <form method="post" action="/testcase_main/" enctype="multipart/form-data" id="forms_upload">
+ <form method="post" action="/testcase_main/{{contest.pk}}/{{question.pk}}/" enctype="multipart/form-data" id="forms_upload">
 {% csrf_token %}
 <div class="form-group row required">
 

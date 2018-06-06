@@ -24,12 +24,13 @@ urlpatterns = [
     url(r'^take_input/',take_input,name= 'take_input'),
     url(r'^create_contest/',create_contest,name= 'create_contest'),
     url(r'^create_question/',create_question,name= 'create_question'),
-    url(r'^testcase/',testcase,name= 'testcase'),
-    url(r'^testcase_main/',testcase_main,name= 'testcase_main'),
     url(r'^match_testcase/',match_testcase,name= 'match_testcase'),
     url(r'^contests/$',exsisting_contest,name= 'exsisting_contest'),
     url(r'^contests/(?P<pk>\d+)/$',problem,name= 'problem'),
     url(r'^contests/(?P<cont>\d+)/(?P<pk>\d+)/$',question,name= 'question'),   
-    url(r'^contests/(?P<pk>\d+)/(?P<pkk>\d+)/submit/$',submit_problem_contest,name= 'submit_contest'),    
+    url(r'^contests/(?P<pk>\d+)/(?P<pkk>\d+)/submit/$',submit_problem_contest,name= 'submit_contest'),  
+    url(r'^contests/(?P<pk>\d+)/(?P<pkk>\d+)/testcase/$',testcase,name= 'testcase'),
+    url(r'^testcase_main/(?P<pk>\d+)/(?P<pkk>\d+)/$',testcase_main,name= 'testcase_main'),
+  
 
 ]

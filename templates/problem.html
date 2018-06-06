@@ -5,6 +5,9 @@
 		<a href = "{% url 'question' contest.pk problem.pk %}">{{problem.Name}}</a>
 		<br></br>
 		{% endfor %}
+
+	<a href = "{% url 'create_question' %}" ><button type="button" class="btn btn-primary">Create Question</button></a>
+
 	</body>
 </head>
 </html>
