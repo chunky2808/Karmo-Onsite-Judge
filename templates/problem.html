@@ -2,7 +2,7 @@
 <head>
 	<body>
 		{% for problem in problem %}
-		<a href = "{% url 'question' problem.pk %}">{{problem.Name}}</a>
+		<a href = "{% url 'question' contest.pk problem.pk %}">{{problem.Name}}</a>
 		<br></br>
 		{% endfor %}
 	</body>

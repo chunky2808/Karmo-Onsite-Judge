@@ -229,10 +229,12 @@ def run_file():
 #Function to run file
 
 #For single question
-def question(request,pk):
+def question(request,pk,cont):
 	question = Question.objects.get(pk=pk)
+	contest = Contest.objects.get(pk =cont)
+	print(contest)
 	print(question)
-	return render(request,'single_question.html',{'question':question})
+	return render(request,'single_question.html',{'question':question,'contest':contest})
 #For single question
 
 
@@ -243,9 +245,43 @@ def exsisting_contest(request):
 
 #To display all questions
 def problem(request,pk):
-	print("hi")
 	print(pk)
+	contest = Contest.objects.filter(pk=pk)
 	question = Question.objects.filter(contest=pk)
 	print(question)
-	return render(request,'problem.html',{'problem':question})
+	for contest in contest:
+		contests = contest
+	return render(request,'problem.html',{'problem':question,'contest':contests})
 #To display all questions	
+
+def submit_problem_contest(request,pk,pkk):
+	print("hi")
+	contest = Contest.objects.get(pk=pk)
+	question = Question.objects.get(pk=pkk)
+	if request.method == 'POST':
+		form = NewTopicForm3(request.POST)
+		if form.is_valid():
+			new = form.save(commit=False)
+			new.save()
+			p = new.id
+			code = Code_Snippet.objects.get(id = p)
+			print(code.code)
+			dir_path = BASE_DIR + '/Contest/%s'%contest.Name + '/%s'%question.Name +'/code_compile'
+			if not os.path.exists(dir_path):
+				os.makedirs(dir_path, 0o777)
+			file2write=open('/home/paras/Desktop/coding/my-project/Judge/Contest/%s'%contest.Name + '/%s'%question.Name +'/code_compile/%s.cpp'%p,'w')
+			file2write.write(code.code)
+			file2write.close()
+			file_path = '/home/paras/Desktop/coding/my-project/Judge/Contest/%s'%contest.Name + '/%s'%question.Name +'/code_compile/%s.cpp'%p
+			if code.language=='c++' or code.language=='C++':
+				cmd = 'g++ %s'%file_path
+				status = subprocess.call(cmd, shell=True)
+				if(status==1):
+					print("Compilation Error")
+					return HttpResponse("Compilation Error")
+				else:
+					print("Running Successfully")	
+					return HttpResponse("Running Successfully")
+	else:
+		form = NewTopicForm3()
+	return render(request, 'code_snippet.html', {'form' : form})	
