@@ -24,7 +24,7 @@ from users import views as users_views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', exsisting_contest,name='home'),
-    url(r'^hi/', hii),
+    url(r'^hi/', hii,name='compile_test'),
     url(r'^take_input/',take_input,name= 'take_input'),
     url(r'^create_contest/',create_contest,name= 'create_contest'),
     url(r'^create_question/',create_question,name= 'create_question'),

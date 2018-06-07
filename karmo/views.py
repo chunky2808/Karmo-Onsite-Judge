@@ -41,6 +41,8 @@ def hii(request):
 		print(subprocess.check_output(cmd, shell=True))
 		print("Error")
 	generate_input()
+	return HttpResponse("ok")
+	
 
 
 def generate_input():
@@ -181,6 +183,10 @@ def create_question(request):
 			cmd = 'mkdir %s/'%BASE_DIR + '/Contest'+ '/%s'%new.contest  +'/%s'%new.Name + '/solution' #create folder solution for question in a contest 
 			subprocess.call(cmd, shell=True)
 
+			cmd = 'mkdir %s/'%BASE_DIR + '/Contest'+ '/%s'%new.contest  +'/%s'%new.Name + '/coreoperations' #create folder coreoperations for operations 
+			subprocess.call(cmd, shell=True)
+
+
 			#write question to a file in local
 			file2write=open('%s'%BASE_DIR + '/Contest'+ '/%s'%new.contest  +'/%s'%new.Name + '/question' + '/Question.txt','w')
 			file2write.write(new.Prob_statement)
@@ -268,6 +274,7 @@ def problem(request,pk):
 
 @login_required(login_url='/users/login/')
 #submit solution in contest
+#file saving in code_compile folder for contest with name of user +id
 def submit_problem_contest(request,pk,pkk):
 	print("hi")
 	contest = Contest.objects.get(pk=pk)
@@ -283,10 +290,11 @@ def submit_problem_contest(request,pk,pkk):
 			dir_path = BASE_DIR + '/Contest/%s'%contest.Name + '/%s'%question.Name +'/code_compile'
 			if not os.path.exists(dir_path):
 				os.makedirs(dir_path, 0o777)
-			file2write=open(BASE_DIR + '/Contest/%s'%contest.Name + '/%s'%question.Name +'/code_compile/%s.cpp'%p,'w')
+			nam = request.user
+			file2write=open(BASE_DIR + '/Contest/%s'%contest.Name + '/%s'%question.Name +'/code_compile/%s'%nam + '%s'%p + '.cpp','w')
 			file2write.write(code.code)
 			file2write.close()
-			file_path = BASE_DIR + '/Contest/%s'%contest.Name + '/%s'%question.Name +'/code_compile/%s.cpp'%p
+			file_path = BASE_DIR + '/Contest/%s'%contest.Name + '/%s'%question.Name +'/code_compile/%s'%nam + '%s'%p + '.cpp'
 			if code.language=='c++' or code.language=='C++':
 				cmd = 'g++ %s'%file_path
 				status = subprocess.call(cmd, shell=True)
