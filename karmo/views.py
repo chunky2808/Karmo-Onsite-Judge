@@ -14,6 +14,7 @@ from django.core.files.base import ContentFile
 
 from django.core.files.storage import default_storage
 
+import random, string
 
 #g++ -o output_file input_file
 
@@ -202,17 +203,21 @@ def testcase_main(request,pk,pkk):
 	print(question)
 	print(contest)
 	if request.method == 'POST':
-		print(request.FILES)
 		files = request.FILES.getlist("file")
-		folder = BASE_DIR + '/Contest/' + '/Test/hi/testcases'
+		folder = BASE_DIR + '/Contest/' + '%s/'%contest + '%s'%question +'/testcases'
+		print(folder)
 		f=0
+		#Added x for randomness in input output file name
+		x = ''.join(random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(4))
 		for files in files:
-			if f==0:#input file
-				default_storage.save(folder + '/' + files.name +".txt", ContentFile(files.read()))
-			else:
-				default_storage.save(folder + '/' + files.name +".txt", ContentFile(files.read()))	
-			print(files)
-	return HttpResponse("hi")	
+			ext = files.name.split('.')[-1]
+			if ext=='txt' or ext=='Txt':
+				if f==0:#input file
+					default_storage.save(folder + '/i1' + '%s'%x  +".txt", ContentFile(files.read()))
+				else:
+					default_storage.save(folder + '/o1' + '%s'%x + ".txt", ContentFile(files.read()))
+				f = f+1	
+	return HttpResponse("Uploaded Successfully")	
 #Upload Input,Output Testcase for a question in a particular contest
 
 	
