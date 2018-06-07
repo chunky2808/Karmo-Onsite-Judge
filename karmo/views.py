@@ -16,12 +16,17 @@ from django.core.files.storage import default_storage
 
 import random, string
 
+from django.contrib.auth.decorators import login_required
+
+
 #g++ -o output_file input_file
 
 import os 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 print(BASE_DIR)
 
+
+@login_required(login_url='/users/login/')
 #Compiling,Running file and taking input as a file and generating output in file result.txt
 #C++
 def hii(request):
@@ -58,6 +63,8 @@ def generate_input():
 #Compiling,Running file and taking input as a file and generating output in file result.txt
 
 
+
+@login_required(login_url='/users/login/')
 #checking difference of ouptput file of two files
 def match_testcase(request):
 	cmd = "diff result.txt true_result.txt"
@@ -74,6 +81,7 @@ def match_testcase(request):
 
 #Python
 
+@login_required(login_url='/users/login/')
 def hi(request):
 	
 	#compilation
@@ -91,6 +99,7 @@ def hi(request):
 #Python
 
 
+@login_required(login_url='/users/login/')
 #GIves compilation result for a code
 @csrf_exempt
 def take_input(request):
@@ -124,6 +133,7 @@ def take_input(request):
 #GIves compilation result for a code
 
 
+@login_required(login_url='/users/login/')
 @csrf_exempt
 def create_contest(request):
 	if request.method == 'POST':
@@ -143,6 +153,7 @@ def create_contest(request):
 	return render(request, 'create_contest.html', {'form' : form})
 
 
+@login_required(login_url='/users/login/')
 @csrf_exempt
 def create_question(request):
 	if request.method == 'POST':
@@ -171,13 +182,13 @@ def create_question(request):
 			subprocess.call(cmd, shell=True)
 
 			#write question to a file in local
-			file2write=open('%s'%BASE_DIR + '/Contest'+ '/%s'%new.contest  +'/%s'%new.Name + '/question' + '/%s.txt'%new.Prob_statement,'w')
+			file2write=open('%s'%BASE_DIR + '/Contest'+ '/%s'%new.contest  +'/%s'%new.Name + '/question' + '/Question.txt','w')
 			file2write.write(new.Prob_statement)
 			file2write.close()
 			#write question to a file in local
 
 			#write question to a file in local
-			file2write=open('%s'%BASE_DIR + '/Contest'+ '/%s'%new.contest  +'/%s'%new.Name + '/question' + '/%s.txt'%new.Prob_statement,'w')
+			file2write=open('%s'%BASE_DIR + '/Contest'+ '/%s'%new.contest  +'/%s'%new.Name + '/question' + '/Question.txt','w')
 			file2write.write(new.Prob_statement)
 			file2write.close()
 			#write question to a file in local
@@ -191,6 +202,7 @@ def create_question(request):
 	return render(request, 'create_question.html', {'form' : form})
 
 
+@login_required(login_url='/users/login/')
 #Upload Input,Output Testcase for a question in a particular contest
 def testcase(request,pk,pkk):
 	question = Question.objects.get(pk=pkk)
@@ -220,7 +232,8 @@ def testcase_main(request,pk,pkk):
 	return HttpResponse("Uploaded Successfully")	
 #Upload Input,Output Testcase for a question in a particular contest
 
-	
+
+@login_required(login_url='/users/login/')
 #For single question
 def question(request,pk,cont):
 	question = Question.objects.get(pk=pk)
@@ -231,6 +244,7 @@ def question(request,pk,cont):
 #For single question
 
 
+@login_required(login_url='/users/login/')
 #See all exsisting contests
 def exsisting_contest(request):
 	contest = Contest.objects.all()
@@ -239,6 +253,7 @@ def exsisting_contest(request):
 #See all exsisting contests
 
 
+@login_required(login_url='/users/login/')
 #To display all questions
 def problem(request,pk):
 	print(pk)
@@ -251,6 +266,7 @@ def problem(request,pk):
 #To display all questions	
 
 
+@login_required(login_url='/users/login/')
 #submit solution in contest
 def submit_problem_contest(request,pk,pkk):
 	print("hi")
@@ -288,6 +304,7 @@ def submit_problem_contest(request,pk,pkk):
 
 
 
+@login_required(login_url='/users/login/')
 #Function to run file
 def run_file():
 	#running	

@@ -17,6 +17,10 @@ from django.conf.urls import url
 from django.contrib import admin
 from karmo.views import hi,take_input,create_contest,create_question,testcase,testcase_main,hii,match_testcase,exsisting_contest,problem,question,submit_problem_contest
 
+from django.contrib.auth import views as auth_views
+
+from users import views as users_views
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', exsisting_contest,name='home'),
@@ -31,6 +35,10 @@ urlpatterns = [
     url(r'^contests/(?P<pk>\d+)/(?P<pkk>\d+)/submit/$',submit_problem_contest,name= 'submit_contest'),  
     url(r'^contests/(?P<pk>\d+)/(?P<pkk>\d+)/testcase/$',testcase,name= 'testcase'),
     url(r'^testcase_main/(?P<pk>\d+)/(?P<pkk>\d+)/$',testcase_main,name= 'testcase_main'),
-  
+
+    url(r'^users/signup$',users_views.signup,name= 'signup'),
+    url(r'^users/logout/$', auth_views.LogoutView.as_view(), name='logout'),
+    url(r'^users/login/$', auth_views.LoginView.as_view(template_name='users/login.html'), name='login'),
+
 
 ]

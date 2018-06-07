@@ -1,0 +1,20 @@
+Problem Name : Divisor 4
+
+Problem statement :
+
+Given L and R ,for each L and R Find no of numbers in range L and R having 4 divisors(excluding 1 and no itself)
+
+Input:
+
+The first line of input contains an integer T denoting the number of test cases. Then T test cases follow. Each test case consists of two no's(L and R).
+
+Output:
+
+For each test case, print the Answer in new line.
+
+Constraint :
+
+1 <= T <= 100
+1 <= L < R <= 100000.
+
+Example Test case:
