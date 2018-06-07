@@ -303,6 +303,28 @@ def submit_problem_contest(request,pk,pkk):
 #submit solution in contest
 
 
+#Upload solution of a question in contest
+def upload_solution(request,pk,pkk):
+	contest = Contest.objects.get(pk=pk)
+	question = Question.objects.get(pk=pkk)
+	return render(request, 'upload_sol.html',{'question':question,'contest':contest})
+
+
+def upload_solu(request,pk,pkk):
+	contest = Contest.objects.get(pk=pk)
+	question = Question.objects.get(pk=pkk)
+	if request.method == 'POST':
+		files = request.FILES.getlist("file")
+		folder = BASE_DIR + '/Contest/' + '%s/'%contest + '%s'%question +'/solution'
+		print(folder)
+		f=0
+		for files in files:
+			ext = files.name.split('.')[-1]
+			if ext=='txt' or ext=='Txt' or ext=='cpp' or ext=='Cpp':
+				default_storage.save(folder + '/sol' + ".txt", ContentFile(files.read()))		
+	return HttpResponse("Uploaded Successfully")
+
+
 
 @login_required(login_url='/users/login/')
 #Function to run file
@@ -326,3 +348,8 @@ def run_file():
 	#running
 
 #Function to run file
+
+
+
+
+
