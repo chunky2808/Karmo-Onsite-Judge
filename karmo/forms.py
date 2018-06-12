@@ -10,7 +10,7 @@ class NewTopicForm(forms.ModelForm):
 class NewTopicForm2(forms.ModelForm):
     class Meta:
         model = Question
-        fields = ['contest','Name','Prob_statement','sample_input','explanation','created_by','no_of_submission','url_code']
+        fields = ['contest','Name','Prob_statement','solution','sample_input','explanation','created_by','no_of_submission','url_code']
 
 
 class NewTopicForm3(forms.ModelForm):

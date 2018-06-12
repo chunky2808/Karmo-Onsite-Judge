@@ -175,6 +175,12 @@ def create_question(request):
 			cmd = 'mkdir %s/'%BASE_DIR + '/Contest'+ '/%s'%new.contest  +'/%s'%new.Name + '/testcases' #create folder testcases for question in a contest
 			subprocess.call(cmd, shell=True)
 
+			cmd = 'mkdir %s/'%BASE_DIR + '/Contest'+ '/%s'%new.contest  +'/%s'%new.Name + '/testcases/Input' #create folder testcases for question in a contest
+			subprocess.call(cmd, shell=True)
+
+			cmd = 'mkdir %s/'%BASE_DIR + '/Contest'+ '/%s'%new.contest  +'/%s'%new.Name + '/testcases/Output' #create folder testcases for question in a contest
+			subprocess.call(cmd, shell=True)			
+
 
 			cmd = 'mkdir %s/'%BASE_DIR + '/Contest'+ '/%s'%new.contest  +'/%s'%new.Name + '/question' #create folder question for question in a contest
 			subprocess.call(cmd, shell=True)
@@ -194,8 +200,8 @@ def create_question(request):
 			#write question to a file in local
 
 			#write question to a file in local
-			file2write=open('%s'%BASE_DIR + '/Contest'+ '/%s'%new.contest  +'/%s'%new.Name + '/question' + '/Question.txt','w')
-			file2write.write(new.Prob_statement)
+			file2write=open('%s'%BASE_DIR + '/Contest'+ '/%s'%new.contest  +'/%s'%new.Name + '/solution' + '/Solution.cpp','w')
+			file2write.write(new.solution)
 			file2write.close()
 			#write question to a file in local
 
@@ -231,9 +237,9 @@ def testcase_main(request,pk,pkk):
 			ext = files.name.split('.')[-1]
 			if ext=='txt' or ext=='Txt':
 				if f==0:#input file
-					default_storage.save(folder + '/i1' + '%s'%x  +".txt", ContentFile(files.read()))
+					default_storage.save(folder + '/Input' + '/i1' + '%s'%x  +".txt", ContentFile(files.read()))
 				else:
-					default_storage.save(folder + '/o1' + '%s'%x + ".txt", ContentFile(files.read()))
+					default_storage.save(folder + '/Output'+'/o1' + '%s'%x + ".txt", ContentFile(files.read()))
 				f = f+1	
 	return HttpResponse("Uploaded Successfully")	
 #Upload Input,Output Testcase for a question in a particular contest
@@ -253,6 +259,7 @@ def question(request,pk,cont):
 @login_required(login_url='/users/login/')
 #See all exsisting contests
 def exsisting_contest(request):
+	print(request.META['HTTP_HOST'])
 	contest = Contest.objects.all()
 	print(contest)
 	return render(request,'exsisting_contest.html',{'contest':contest})
@@ -309,28 +316,6 @@ def submit_problem_contest(request,pk,pkk):
 	return render(request, 'code_snippet.html', {'form' : form})	
 
 #submit solution in contest
-
-
-#Upload solution of a question in contest
-def upload_solution(request,pk,pkk):
-	contest = Contest.objects.get(pk=pk)
-	question = Question.objects.get(pk=pkk)
-	return render(request, 'upload_sol.html',{'question':question,'contest':contest})
-
-
-def upload_solu(request,pk,pkk):
-	contest = Contest.objects.get(pk=pk)
-	question = Question.objects.get(pk=pkk)
-	if request.method == 'POST':
-		files = request.FILES.getlist("file")
-		folder = BASE_DIR + '/Contest/' + '%s/'%contest + '%s'%question +'/solution'
-		print(folder)
-		f=0
-		for files in files:
-			ext = files.name.split('.')[-1]
-			if ext=='txt' or ext=='Txt' or ext=='cpp' or ext=='Cpp':
-				default_storage.save(folder + '/sol' + ".txt", ContentFile(files.read()))		
-	return HttpResponse("Uploaded Successfully")
 
 
 

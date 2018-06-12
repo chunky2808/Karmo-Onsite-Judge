@@ -30,6 +30,7 @@ class Question(models.Model):
 	explanation = models.TextField(max_length=8000,null=True)
 	created_by = models.ForeignKey(User,related_name = 'ques_created_by')
 	no_of_submission = models.IntegerField(default = 0)
+	solution = models.TextField(default ='')
 	url_code  = models.TextField(null=True)
 
 	def __str__(self):
@@ -42,8 +43,8 @@ class Code_Snippet(models.Model):
 	def __str__(self):
 		return self.code
 
-# class Testcase(models.Model):
-# 	contest = models.ForeignKey(Contest,related_name='testcase_contest')
-# 	question = models.ForeignKey(Question,related_name = 'testcase_ques')
-# 	inpt = models.FileField(upload_to='documents/%Y/%m/%d')
-# 	outp = models.FileField(upload_to='documents/%Y/%m/%d')
+class Testcase(models.Model):
+	contest = models.ForeignKey(Contest,related_name='testcase_contest')
+	question = models.ForeignKey(Question,related_name = 'testcase_ques')
+	inpt = models.FileField()
+	outp = models.FileField()
