@@ -1,6 +1,6 @@
 from django.shortcuts import render
 import subprocess
-from .models import Contest,Question
+from .models import Contest,Question,Testcase
 from datetime import datetime
 from .forms import NewTopicForm,NewTopicForm2,NewTopicForm3
 from django.http import HttpResponse, HttpResponseNotFound
@@ -229,8 +229,10 @@ def testcase_main(request,pk,pkk):
 	if request.method == 'POST':
 		files = request.FILES.getlist("file")
 		folder = BASE_DIR + '/Contest/' + '%s/'%contest + '%s'%question +'/testcases'
+		folder2 = '/Contest/' + '%s/'%contest + '%s'%question +'/testcases'
 		print(folder)
 		f=0
+		test = Testcase.objects.create(contest=contest,question=question)
 		#Added x for randomness in input output file name
 		x = ''.join(random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(4))
 		for files in files:
@@ -238,8 +240,11 @@ def testcase_main(request,pk,pkk):
 			if ext=='txt' or ext=='Txt':
 				if f==0:#input file
 					default_storage.save(folder + '/Input' + '/i1' + '%s'%x  +".txt", ContentFile(files.read()))
+					print(Testcase.objects.filter(id = test.id))
+					Testcase.objects.filter(id = test.id).update(inpt =(folder2 + '/Input' + '/i1' + '%s'%x  +".txt") )
 				else:
 					default_storage.save(folder + '/Output'+'/o1' + '%s'%x + ".txt", ContentFile(files.read()))
+					Testcase.objects.filter(id = test.id).update(outp =(folder2 + '/Input' + '/i1' + '%s'%x  +".txt") )
 				f = f+1	
 	return HttpResponse("Uploaded Successfully")	
 #Upload Input,Output Testcase for a question in a particular contest

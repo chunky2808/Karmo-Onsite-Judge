@@ -46,5 +46,5 @@ class Code_Snippet(models.Model):
 class Testcase(models.Model):
 	contest = models.ForeignKey(Contest,related_name='testcase_contest')
 	question = models.ForeignKey(Question,related_name = 'testcase_ques')
-	inpt = models.FileField()
-	outp = models.FileField()
+	inpt = models.TextField()#path	
+	outp = models.TextField()#path
