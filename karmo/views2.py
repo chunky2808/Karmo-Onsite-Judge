@@ -45,22 +45,6 @@ def hii(request):
 	
 
 
-def generate_input():
-	startTime = datetime.now()
-	cmd = './a.out < /home/paras/Desktop/coding/my-project/Judge/input.txt > result.txt' #running a c++ program(name of file)
-
-	#command to run code with input file ./test.exe input.txt
-	
-	p = subprocess.call(cmd, shell=True)
-	if p==0:
-		print("Successfully running")
-	else:
-		print(subprocess.check_output(cmd, shell=True))
-		print("Error")
-
-	print("Time taken in Judging")
-	print(datetime.now() - startTime)
-	#running
 #C++
 #Compiling,Running file and taking input as a file and generating output in file result.txt
 
@@ -284,7 +268,6 @@ def problem(request,pk):
 #To display all questions	
 
 
-
 @login_required(login_url='/users/login/')
 #submit solution in contest
 #file saving in code_compile folder for contest with name of user +id
@@ -307,24 +290,43 @@ def submit_problem_contest(request,pk,pkk):
 			compile_folder_path = BASE_DIR + '/Contest/%s'%contest.Name + '/%s'%question.Name +'/code_compile/%s'%nam + '%s'%p
 			if not os.path.exists(compile_folder_path):
 				os.makedirs(compile_folder_path, 0o777)
-			file2write=open(compile_folder_path + '/%s'%nam + '%s'%p + '.cpp','w')
+			file2write=open(compile_folder_path + '/%s'%name + '%s'%p + '.cpp','w')
 			file2write.write(code.code)
 			file2write.close()
 			file_path = compile_folder_path +'/%s'%nam + '%s'%p + '.cpp'
 			if code.language=='c++' or code.language=='C++':
 				cmd = 'g++ %s'%file_path +" -o "+ compile_folder_path +'/%s'%nam + '%s'%p + '.out'
-				print(cmd)
 				status = subprocess.call(cmd, shell=True)
 				if(status==1):
 					print("Compilation Error")
 					return HttpResponse("Compilation Error")
 				else:
 					print("Running Successfully")	
-					return HttpResponse("Successfully Compiled")
+					generate_input()
 	else:
 		form = NewTopicForm3()
-	return render(request, 'code_snippet.html', {'form' : form})
+	return render(request, 'code_snippet.html', {'form' : form})	
+
 #submit solution in contest
+
+
+def generate_input():
+	startTime = datetime.now()
+	cmd = './a.out < /home/paras/Desktop/coding/my-project/Judge/input.txt > result.txt' #running a c++ program(name of file)
+
+	#command to run code with input file ./test.exe input.txt
+	
+	p = subprocess.call(cmd, shell=True)
+	if p==0:
+		print("Successfully running")
+	else:
+		print(subprocess.check_output(cmd, shell=True))
+		print("Error")
+
+	print("Time taken in Judging")
+	print(datetime.now() - startTime)
+	#running
+
 
 
 
