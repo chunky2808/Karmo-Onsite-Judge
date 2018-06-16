@@ -346,14 +346,16 @@ def generate_input_contest(path_to_send,contest,question,path_to_question):
 
 	for testcase in testcase:
 		print(testcase.inpt)
-		#cmd = '.%s'%path_to_send + ' < ' '%s'%path_to_question + '/testcases/Input/%s'%testcase.inpt '> result.txt' #running a c++ program(name of file)
+		#cmd = '/home/paras/Desktop/coding/my-project/Judge/Contest/Algofuzz18.1/Divisor4/code_compile/demo78/demo78.out < /home/paras/Desktop/coding/my-project/Judge/Contest/Algofuzz18.1/Divisor4/testcases/Input/i18.txt > result.txt'
+		cmd = '%s'%path_to_send + ' < ' '%s'%BASE_DIR + '%s'%testcase.inpt + ' > result.txt' #running a c++ program(name of file)
+		print(hi,cmd)
+		print(path_to_send)
 		p = subprocess.call(cmd, shell=True)
-
-	if p==0:
-		print("Successfully running")
-	else:
-		print(subprocess.check_output(cmd, shell=True))
-		print("Error")
+		if p==0:
+			print("Successfully running")
+		else:
+			print(subprocess.check_output(cmd, shell=True))
+			print("Error")
 
 	print("Time taken in Judging")
 	print(datetime.now() - startTime)
