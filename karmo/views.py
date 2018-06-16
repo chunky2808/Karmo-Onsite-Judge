@@ -234,17 +234,18 @@ def testcase_main(request,pk,pkk):
 		f=0
 		test = Testcase.objects.create(contest=contest,question=question)
 		#Added x for randomness in input output file name
-		x = ''.join(random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(4))
+		#x = ''.join(random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(4))
 		for files in files:
 			ext = files.name.split('.')[-1]
 			if ext=='txt' or ext=='Txt':
 				if f==0:#input file
-					default_storage.save(folder + '/Input' + '/i1' + '%s'%x  +".txt", ContentFile(files.read()))
+					default_storage.save(folder + '/Input' + '/i' + '%s'%str(test.id)  +".txt", ContentFile(files.read()))
+					print(test.id)
 					print(Testcase.objects.filter(id = test.id))
-					Testcase.objects.filter(id = test.id).update(inpt =(folder2 + '/Input' + '/i1' + '%s'%x  +".txt") )
+					Testcase.objects.filter(id = test.id).update(inpt =(folder2 + '/Input' + '/i' + '%s'%str(test.id)  +".txt") )
 				else:
-					default_storage.save(folder + '/Output'+'/o1' + '%s'%x + ".txt", ContentFile(files.read()))
-					Testcase.objects.filter(id = test.id).update(outp =(folder2 + '/Input' + '/i1' + '%s'%x  +".txt") )
+					default_storage.save(folder + '/Output'+'/o' + '%s'%str(test.id) + ".txt", ContentFile(files.read()))
+					Testcase.objects.filter(id = test.id).update(outp =(folder2 + '/Output' + '/o' + '%s'%str(test.id)  +".txt") )
 				f = f+1	
 	return HttpResponse("Uploaded Successfully")	
 #Upload Input,Output Testcase for a question in a particular contest
@@ -301,6 +302,9 @@ def submit_problem_contest(request,pk,pkk):
 			code = Code_Snippet.objects.get(id = p)
 			print(code.code)
 			dir_path = BASE_DIR + '/Contest/%s'%contest.Name + '/%s'%question.Name +'/code_compile'
+
+			path_to_question = BASE_DIR + '/Contest/%s'%contest.Name + '/%s'%question.Name
+
 			if not os.path.exists(dir_path):
 				os.makedirs(dir_path, 0o777)
 			nam = request.user
@@ -313,18 +317,47 @@ def submit_problem_contest(request,pk,pkk):
 			file_path = compile_folder_path +'/%s'%nam + '%s'%p + '.cpp'
 			if code.language=='c++' or code.language=='C++':
 				cmd = 'g++ %s'%file_path +" -o "+ compile_folder_path +'/%s'%nam + '%s'%p + '.out'
-				print(cmd)
+				path_to_send = compile_folder_path +'/%s'%nam + '%s'%p + '.out'
 				status = subprocess.call(cmd, shell=True)
+
+				compile_folder_path_input = compile_folder_path + '/Input'
+				if not os.path.exists(compile_folder_path_input):
+					os.makedirs(compile_folder_path_input, 0o777)
+
+				compile_folder_path_output = compile_folder_path + '/Output'
+				if not os.path.exists(compile_folder_path_output):
+					os.makedirs(compile_folder_path_output, 0o777)
+
 				if(status==1):
 					print("Compilation Error")
 					return HttpResponse("Compilation Error")
 				else:
 					print("Running Successfully")	
-					return HttpResponse("Successfully Compiled")
+					generate_input_contest(path_to_send,contest,question,path_to_question)
 	else:
 		form = NewTopicForm3()
-	return render(request, 'code_snippet.html', {'form' : form})
-#submit solution in contest
+	return render(request, 'code_snippet.html', {'form' : form})	#submit solution in contest
+
+def generate_input_contest(path_to_send,contest,question,path_to_question):
+	startTime = datetime.now()
+	testcase = Testcase.objects.filter(contest=contest,question=question)
+	
+	#path_to_send = /home/paras/Desktop/coding/my-project/Judge/Contest/Algofuzz18.1/Divisor4/code_compile/demo70/demo70.out
+
+	for testcase in testcase:
+		print(testcase.inpt)
+		#cmd = '.%s'%path_to_send + ' < ' '%s'%path_to_question + '/testcases/Input/%s'%testcase.inpt '> result.txt' #running a c++ program(name of file)
+		p = subprocess.call(cmd, shell=True)
+
+	if p==0:
+		print("Successfully running")
+	else:
+		print(subprocess.check_output(cmd, shell=True))
+		print("Error")
+
+	print("Time taken in Judging")
+	print(datetime.now() - startTime)
+	#running
 
 
 

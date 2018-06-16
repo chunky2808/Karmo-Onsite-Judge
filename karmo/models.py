@@ -48,3 +48,6 @@ class Testcase(models.Model):
 	question = models.ForeignKey(Question,related_name = 'testcase_ques')
 	inpt = models.TextField()#path	
 	outp = models.TextField()#path
+	
+	def __unicode__(self):
+		return self.id
