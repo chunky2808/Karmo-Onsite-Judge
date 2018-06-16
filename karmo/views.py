@@ -333,12 +333,12 @@ def submit_problem_contest(request,pk,pkk):
 					return HttpResponse("Compilation Error")
 				else:
 					print("Running Successfully")	
-					generate_input_contest(path_to_send,contest,question,path_to_question)
+					generate_input_contest(path_to_send,contest,question,path_to_question,compile_folder_path)
 	else:
 		form = NewTopicForm3()
 	return render(request, 'code_snippet.html', {'form' : form})	#submit solution in contest
 
-def generate_input_contest(path_to_send,contest,question,path_to_question):
+def generate_input_contest(path_to_send,contest,question,path_to_question,compile_folder_path):
 	startTime = datetime.now()
 	testcase = Testcase.objects.filter(contest=contest,question=question)
 	
@@ -346,8 +346,9 @@ def generate_input_contest(path_to_send,contest,question,path_to_question):
 
 	for testcase in testcase:
 		print(testcase.inpt)
+		name_out = testcase.outp.split('/')[-1]
 		#cmd = '/home/paras/Desktop/coding/my-project/Judge/Contest/Algofuzz18.1/Divisor4/code_compile/demo78/demo78.out < /home/paras/Desktop/coding/my-project/Judge/Contest/Algofuzz18.1/Divisor4/testcases/Input/i18.txt > result.txt'
-		cmd = '%s'%path_to_send + ' < ' '%s'%BASE_DIR + '%s'%testcase.inpt + ' > result.txt' #running a c++ program(name of file)
+		cmd = '%s'%path_to_send + ' < ' '%s'%BASE_DIR + '%s'%testcase.inpt + ' > ' + '%s'%compile_folder_path + '/Output/%s'%name_out #running a c++ program(name of file)
 		print(hi,cmd)
 		print(path_to_send)
 		p = subprocess.call(cmd, shell=True)
