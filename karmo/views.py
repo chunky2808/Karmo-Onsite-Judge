@@ -349,8 +349,6 @@ def generate_input_contest(path_to_send,contest,question,path_to_question,compil
 		name_out = testcase.outp.split('/')[-1]
 		#cmd = '/home/paras/Desktop/coding/my-project/Judge/Contest/Algofuzz18.1/Divisor4/code_compile/demo78/demo78.out < /home/paras/Desktop/coding/my-project/Judge/Contest/Algofuzz18.1/Divisor4/testcases/Input/i18.txt > result.txt'
 		cmd = '%s'%path_to_send + ' < ' '%s'%BASE_DIR + '%s'%testcase.inpt + ' > ' + '%s'%compile_folder_path + '/Output/%s'%name_out #running a c++ program(name of file)
-		print(hi,cmd)
-		print(path_to_send)
 		p = subprocess.call(cmd, shell=True)
 		if p==0:
 			print("Successfully running")
@@ -360,8 +358,16 @@ def generate_input_contest(path_to_send,contest,question,path_to_question,compil
 
 	print("Time taken in Judging")
 	print(datetime.now() - startTime)
-	#running
 
+
+def match_testcase_contest():
+	cmd = "diff result.txt true_result.txt"
+	p = subprocess.call(cmd,shell=True)
+	if p==0:
+		return HttpResponse("Successfully running")
+	else:
+		print("Error")
+		return HttpResponse("WA")
 
 
 @login_required(login_url='/users/login/')
