@@ -1,0 +1,196 @@
+YES 128
+~
+YES 104
+~
+YES 55
+~
+YES 31
+~
+YES 65
+~
+YES 119
+~
+YES 13
+~
+YES 84
+~
+YES 107
+~
+YES 3
+~
+NO
+~
+YES 100
+~
+YES 80
+~
+YES 120
+~
+YES 111
+~
+YES 38
+~
+YES 138
+~
+YES 47
+~
+YES 4
+~
+YES 137
+~
+YES 84
+~
+YES 14
+~
+YES 12
+~
+YES 73
+~
+YES 68
+~
+YES 110
+~
+YES 58
+~
+YES 148
+~
+YES 67
+~
+YES 96
+~
+YES 145
+~
+YES 129
+~
+YES 57
+~
+YES 125
+~
+YES 106
+~
+YES 102
+~
+YES 106
+~
+YES 87
+~
+YES 122
+~
+YES 70
+~
+YES 111
+~
+YES 71
+~
+YES 103
+~
+YES 10
+~
+YES 86
+~
+YES 9
+~
+YES 19
+~
+YES 12
+~
+YES 98
+~
+YES 135
+~
+YES 36
+~
+YES 62
+~
+YES 120
+~
+YES 35
+~
+YES 139
+~
+YES 25
+~
+YES 146
+~
+YES 128
+~
+YES 14
+~
+YES 116
+~
+YES 26
+~
+YES 87
+~
+YES 99
+~
+YES 78
+~
+YES 140
+~
+YES 13
+~
+YES 71
+~
+YES 89
+~
+YES 46
+~
+YES 45
+~
+YES 19
+~
+YES 127
+~
+YES 66
+~
+YES 141
+~
+YES 133
+~
+YES 82
+~
+YES 143
+~
+YES 9
+~
+YES 109
+~
+YES 24
+~
+YES 116
+~
+YES 43
+~
+YES 38
+~
+YES 46
+~
+YES 103
+~
+YES 140
+~
+YES 56
+~
+YES 72
+~
+YES 18
+~
+YES 130
+~
+YES 146
+~
+YES 46
+~
+YES 32
+~
+YES 94
+~
+YES 62
+~
+NO
+~
+YES 117
+~
+YES 123
+~

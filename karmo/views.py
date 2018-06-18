@@ -290,7 +290,7 @@ def problem(request,pk):
 #submit solution in contest
 #file saving in code_compile folder for contest with name of user +id
 def submit_problem_contest(request,pk,pkk):
-	print("hi")
+	startTime = datetime.now()
 	contest = Contest.objects.get(pk=pk)
 	question = Question.objects.get(pk=pkk)
 	if request.method == 'POST':
@@ -338,7 +338,8 @@ def submit_problem_contest(request,pk,pkk):
 					if ans==0:
 						return HttpResponse("WA")
 					else:
-						return HttpResponse("AC")
+						print(datetime.now() - startTime)
+						return HttpResponse("AC",datetime.now() - startTime)
 
 
 	else:
@@ -364,9 +365,6 @@ def generate_input_contest(path_to_send,contest,question,path_to_question,compil
 			ans = match_testcase_contest(out_testcase,compile_testcase,ans)
 			if ans==0:
 				break
-
-	print("Time taken in Judging")
-	print(datetime.now() - startTime)
 	if ans==0:
 		return ans
 	else:
