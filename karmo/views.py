@@ -69,7 +69,7 @@ def generate_input():
 @login_required(login_url='/users/login/')
 #checking difference of ouptput file of two files
 def match_testcase(request):
-	cmd = "diff result.txt true_result.txt"
+	cmd = "diff -w result.txt true_result.txt"
 	p = subprocess.call(cmd,shell=True)
 	if p==0:
 		return HttpResponse("Successfully running")
@@ -332,8 +332,15 @@ def submit_problem_contest(request,pk,pkk):
 					print("Compilation Error")
 					return HttpResponse("Compilation Error")
 				else:
-					print("Running Successfully")	
-					generate_input_contest(path_to_send,contest,question,path_to_question,compile_folder_path)
+					print("Running Successfully")
+					ans =0	
+					ans =	generate_input_contest(path_to_send,contest,question,path_to_question,compile_folder_path)
+					if ans==0:
+						return HttpResponse("WA")
+					else:
+						return HttpResponse("AC")
+
+
 	else:
 		form = NewTopicForm3()
 	return render(request, 'code_snippet.html', {'form' : form})	#submit solution in contest
@@ -343,31 +350,39 @@ def generate_input_contest(path_to_send,contest,question,path_to_question,compil
 	testcase = Testcase.objects.filter(contest=contest,question=question)
 	
 	#path_to_send = /home/paras/Desktop/coding/my-project/Judge/Contest/Algofuzz18.1/Divisor4/code_compile/demo70/demo70.out
-
+	ans =0
 	for testcase in testcase:
 		print(testcase.inpt)
 		name_out = testcase.outp.split('/')[-1]
 		#cmd = '/home/paras/Desktop/coding/my-project/Judge/Contest/Algofuzz18.1/Divisor4/code_compile/demo78/demo78.out < /home/paras/Desktop/coding/my-project/Judge/Contest/Algofuzz18.1/Divisor4/testcases/Input/i18.txt > result.txt'
 		cmd = '%s'%path_to_send + ' < ' '%s'%BASE_DIR + '%s'%testcase.inpt + ' > ' + '%s'%compile_folder_path + '/Output/%s'%name_out #running a c++ program(name of file)
+		out_testcase = '%s'%BASE_DIR + '%s'%testcase.outp 
+		compile_testcase = '%s'%compile_folder_path + '/Output/%s'%name_out
+		print("this",out_testcase,compile_testcase)
 		p = subprocess.call(cmd, shell=True)
 		if p==0:
-			print("Successfully running")
-		else:
-			print(subprocess.check_output(cmd, shell=True))
-			print("Error")
+			ans = match_testcase_contest(out_testcase,compile_testcase,ans)
+			if ans==0:
+				break
 
 	print("Time taken in Judging")
 	print(datetime.now() - startTime)
+	if ans==0:
+		return ans
+	else:
+		return ans	
 
 
-def match_testcase_contest():
-	cmd = "diff result.txt true_result.txt"
+def match_testcase_contest(output_path,compile_path,ans):
+	cmd = "diff -w %s"%output_path + " %s"%compile_path
 	p = subprocess.call(cmd,shell=True)
 	if p==0:
-		return HttpResponse("Successfully running")
+		ans=1
+		return ans
 	else:
+		ans=0
 		print("Error")
-		return HttpResponse("WA")
+		return ans
 
 
 @login_required(login_url='/users/login/')
