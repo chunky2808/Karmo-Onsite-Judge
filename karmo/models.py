@@ -51,3 +51,14 @@ class Testcase(models.Model):
 	
 	def __unicode__(self):
 		return self.id
+
+class Submit_Question(models.Model):#user model for submission of question
+	user = models.ForeignKey(User,related_name='submitted_by')
+	contest = models.ForeignKey(Contest,related_name='submit_contest')
+	question = models.ForeignKey(Question,related_name = 'submit_ques')
+	verdict = models.BooleanField()
+
+	def __unicode__(self):
+		return self.id
+
+		
