@@ -272,22 +272,27 @@ def exsisting_contest(request):
 #See all exsisting contests
 
 
-@login_required(login_url='/users/login/')
 #To display all questions
+'''
+logic to display solved question using flag of verdict =1 and for unsolved question taking all question in a set and removing solved question from set.
+'''
+@login_required(login_url='/users/login/')
 def problem(request,pk):
-	print(pk)
 	contest = Contest.objects.filter(pk=pk)
 	question = Question.objects.filter(contest=pk)
 	user = request.user
-	print(question)
+	
 	solved_question = Submit_Question.objects.filter(user=user,contest=contest,question=question,verdict=1)
-	unsolved_question = Submit_Question.objects.filter(user=user,contest=contest,question=question,verdict=0)
-	print(solved_question)
-	print(unsolved_question)
+	
+	my_set = set()
+	for solved_question in solved_question:
+		my_set.add(solved_question.question)
+	
+	print(my_set)
+
 	for contest in contest:
 		contests = contest
-	return render(request,'problem.html',{'problem':question,'contest':contests,'solved_question':solved_question,'unsolved_question':unsolved_question})
-#To display all questions	
+	return render(request,'problem.html',{'contest':contests,'question':question,'my_set':my_set})
 
 
 
@@ -413,7 +418,10 @@ def run_file():
 
 #Function to run file
 
-
+def ranking(request,pk):
+	submission = Submit_Question.objects.filter(contest=pk,verdict=1).order_by('time')
+	print(submission)
+	return render(request,'ranking.html',{'submission':submission})
 
 
 

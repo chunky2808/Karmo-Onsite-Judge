@@ -1,18 +1,24 @@
 <html>
 <head>
 	<body>
-		{% for problem in problem %}
-		<a href = "{% url 'question' contest.pk problem.pk %}">{{problem.Name}}</a>
+		
+		<p>  Problems</p>
+		{% for question in  question %}
+		<a href = "{% url 'question' contest.id question.id %}">{{question}}</a>
 		<br></br>
 		{% endfor %}
+
 		<p> Solved Problems</p>
-		{% for solved_problem in  solved_problem %}
-
+		{% for solved_problem in  my_set %}
+		<a href = "#">{{solved_problem}}</a>
+		<br></br>
 		{% endfor %}
-
-		<p> Unsolved Problems</p>
-
+		
+		
 	<a href = "{% url 'create_question' %}" ><button type="button" class="btn btn-primary">Create Question</button></a>
+
+	<a href = "{% url 'ranking' contest.id %}" ><button type="button" class="btn btn-primary">Ranking</button></a>
+
 
 	</body>
 </head>

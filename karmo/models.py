@@ -13,6 +13,7 @@ class Contest(models.Model):
 	language_accepted = models.TextField(max_length = 4000)
 	url_code  = models.TextField(null=True)
 	date = models.CharField(max_length=244)
+	score = models.CharField(max_length=244,default =100)
 
 	def __str__(self):
 		return self.Name
