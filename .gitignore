@@ -2,3 +2,6 @@ db.sqlite3
 code_compile/
 judge/
 ./migrations
+src/__pycache__/*
+karmo/__pycache__/*
+karmo/migrations/*

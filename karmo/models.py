@@ -2,7 +2,7 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 from src import settings
-
+import datetime
 
 
 class Contest(models.Model):
@@ -52,11 +52,14 @@ class Testcase(models.Model):
 	def __unicode__(self):
 		return self.id
 
+
+
 class Submit_Question(models.Model):#user model for submission of question
 	user = models.ForeignKey(User,related_name='submitted_by')
 	contest = models.ForeignKey(Contest,related_name='submit_contest')
 	question = models.ForeignKey(Question,related_name = 'submit_ques')
-	verdict = models.BooleanField()
+	verdict = models.IntegerField(default = 0)
+	time = models.TimeField(default=datetime.datetime.now())
 
 	def __unicode__(self):
 		return self.id

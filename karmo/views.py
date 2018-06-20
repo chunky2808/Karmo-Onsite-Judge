@@ -1,6 +1,6 @@
 from django.shortcuts import render
 import subprocess
-from .models import Contest,Question,Testcase
+from .models import Contest,Question,Testcase,Submit_Question
 from datetime import datetime
 from .forms import NewTopicForm,NewTopicForm2,NewTopicForm3
 from django.http import HttpResponse, HttpResponseNotFound
@@ -278,10 +278,15 @@ def problem(request,pk):
 	print(pk)
 	contest = Contest.objects.filter(pk=pk)
 	question = Question.objects.filter(contest=pk)
+	user = request.user
 	print(question)
+	solved_question = Submit_Question.objects.filter(user=user,contest=contest,question=question,verdict=1)
+	unsolved_question = Submit_Question.objects.filter(user=user,contest=contest,question=question,verdict=0)
+	print(solved_question)
+	print(unsolved_question)
 	for contest in contest:
 		contests = contest
-	return render(request,'problem.html',{'problem':question,'contest':contests})
+	return render(request,'problem.html',{'problem':question,'contest':contests,'solved_question':solved_question,'unsolved_question':unsolved_question})
 #To display all questions	
 
 
@@ -339,6 +344,8 @@ def submit_problem_contest(request,pk,pkk):
 						return HttpResponse("WA")
 					else:
 						print(datetime.now() - startTime)
+						user = request.user
+						Submit_Question.objects.create(user=user,contest=contest,question=question,verdict=1)
 						return HttpResponse("AC",datetime.now() - startTime)
 
 

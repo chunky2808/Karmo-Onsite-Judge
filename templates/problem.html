@@ -5,6 +5,12 @@
 		<a href = "{% url 'question' contest.pk problem.pk %}">{{problem.Name}}</a>
 		<br></br>
 		{% endfor %}
+		<p> Solved Problems</p>
+		{% for solved_problem in  solved_problem %}
+
+		{% endfor %}
+
+		<p> Unsolved Problems</p>
 
 	<a href = "{% url 'create_question' %}" ><button type="button" class="btn btn-primary">Create Question</button></a>
 
