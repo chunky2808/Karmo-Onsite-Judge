@@ -359,6 +359,7 @@ def submit_problem_contest(request,pk,pkk):
 				os.makedirs(dir_path, 0o777)
 			nam = request.user
 			compile_folder_path = BASE_DIR + '/Contest/%s'%contest.Name + '/%s'%question.Name +'/code_compile/%s'%nam + '%s'%p
+			compile_java_folder_path =  '/Contest/%s'%contest.Name + '/%s'%question.Name +'/code_compile/%s'%nam + '%s'%p
 			if not os.path.exists(compile_folder_path):
 				os.makedirs(compile_folder_path, 0o777)
 
@@ -367,18 +368,28 @@ def submit_problem_contest(request,pk,pkk):
 				file2write.write(code.code)
 				file2write.close()
 				file_path = compile_folder_path +'/%s'%nam + '%s'%p + '.cpp'
+			
 			elif code.language=='python2' or code.language=='Python2' or code.language=='python3' or code.language=='Python3':
 				file2write=open(compile_folder_path + '/%s'%nam + '%s'%p + '.py','w')
 				file2write.write(code.code)
 				file2write.close()
 				file_path = compile_folder_path +'/%s'%nam + '%s'%p + '.py'
+			
 			elif code.language=='C' or code.language=='c':
 				file2write=open(compile_folder_path + '/%s'%nam + '%s'%p + '.c','w')
 				file2write.write(code.code)
 				file2write.close()
 				file_path = compile_folder_path +'/%s'%nam + '%s'%p + '.c'
 
-			
+			elif code.language=='Java' or code.language=='java':
+				file2write=open(compile_folder_path + '/main' + '.java','w')
+				file2write.write(code.code)
+				file2write.close()
+				file_path = compile_folder_path +'/main' + '.java'
+				compiled_file_path = compile_folder_path
+
+
+
 			if code.language=='c++' or code.language=='C++' or code.language=='C' or code.language=='c'  or code.language=='C++ 14' or code.language=='c++ 14':
 				compile_folder_path_input = compile_folder_path + '/Input'
 				if not os.path.exists(compile_folder_path_input):
@@ -452,16 +463,62 @@ def submit_problem_contest(request,pk,pkk):
 					Submit_Question.objects.create(user=user,contest=contest,question=question,verdict=1,start_time = startTime,end_time=datetime.now())
 					
 					return HttpResponse("AC",datetime.now() - startTime)
-					
-			else:	
-				return HttpResponse("Language Not Supported")
+			
+			elif code.language=='java' or code.language=='Java':
+				compile_folder_path_input = compile_folder_path + '/Input'
+				if not os.path.exists(compile_folder_path_input):
+					os.makedirs(compile_folder_path_input, 0o777)
 
+				compile_folder_path_output = compile_folder_path + '/Output'
+				if not os.path.exists(compile_folder_path_output):
+					os.makedirs(compile_folder_path_output, 0o777)
+				#cmd = 'g++ %s'%file_path +" -o "+ compile_folder_path +'/%s'%nam + '%s'%p + '.out'
+				cmd = ['javac',file_path]
+
+				path_to_send = compiled_file_path
+				try:
+					status = subprocess.run(cmd, timeout=2.1)
+					if status.returncode==0:
+						print("Running Successfully")
+						ans =0	
+						ans =	java_run(path_to_send,contest,question,path_to_question,compile_folder_path,code.language)
+						print("paras",ans)
+						if ans==0:
+							return HttpResponse("WA")
+						elif ans!=1:
+							return HttpResponse("TLE")	
+						else:
+							print(datetime.now() - startTime)
+							user = request.user
+							end_time = datetime.now();
+							Submit_Question.objects.create(user=user,contest=contest,question=question,verdict=1,start_time = startTime,end_time=datetime.now())
+							# score,created = User_score.objects.get_or_create(user=request.user)
+							# if created:
+							# timee=end_time-startTime
+							# print(('%02d:%02d.%d'%(timee.days,timee.seconds,timee.microseconds))[:-4])
+							# if(end_time-startTime > 0:01:00.000000):
+							# 	return HttpResponse("TLE",end_time-startTime)
+
+							return HttpResponse("AC",datetime.now() - startTime)
+					else:
+						print("Compilation Error")
+						return HttpResponse("Compilation Error")
+							
+					
+				except subprocess.TimeoutExpired:
+					print('Timeout')
+					return HttpResponse("TLE Timeout",datetime.now() - startTime)
+
+			else:
+				return HttpResponse("language Not Supported")	
 				
 
 
 	else:
 		form = NewTopicForm3()
 	return render(request, 'code_snippet.html', {'form' : form})	#submit solution in contest
+
+
 
 def generate_input_contest(path_to_send,contest,question,path_to_question,compile_folder_path):
 	startTime = datetime.now()
@@ -519,6 +576,7 @@ def match_testcase_contest(output_path,compile_path,ans):
 		return ans
 
 
+
 @login_required(login_url='/users/login/')
 #Function to run file
 
@@ -542,9 +600,10 @@ def run_file():
 
 
 def ranking(request,pk):
-	submission = Submit_Question.objects.filter(contest=pk,verdict=1).order_by('time')
+	submission = Submit_Question.objects.filter(contest=pk,verdict=1).order_by('start_time')
 	print(submission)
 	return render(request,'ranking.html',{'submission':submission})
+
 
 
 def python_run(path_to_send,contest,question,path_to_question,compile_folder_path,code_language):
@@ -584,6 +643,48 @@ def python_run(path_to_send,contest,question,path_to_question,compile_folder_pat
 		return ans
 	else:
 		return ans	
+
+
+def java_run(path_to_send,contest,question,path_to_question,compile_folder_path,code_language):
+	startTime = datetime.now()
+	testcase = Testcase.objects.filter(contest=contest,question=question)
+	ans =0
+	for testcase in testcase:
+		print("gggg")
+		name_out = testcase.outp.split('/')[-1]
+		temp_out = '%s'%compile_folder_path + '/Output/%s'%name_out
+		temp_out2 = '%s'%BASE_DIR + '%s'%testcase.inpt
+		myinput = open(temp_out2)
+		myoutput = open(temp_out,"w")
+		print("paras",path_to_send)
+		#subprocess.call('cd Contest',shell=True)
+		cmd = ["java","-cp",path_to_send,"main"]
+		#cmd = ["ls","-l"]
+		out_testcase = '%s'%BASE_DIR + '%s'%testcase.outp 
+		compile_testcase = '%s'%compile_folder_path + '/Output/%s'%name_out
+	#	print("this",out_testcase,compile_testcase)
+
+		try:
+			p = subprocess.run(cmd,timeout=3,stdin=myinput,stdout = myoutput)
+			if p.returncode==0:
+				print("Successfully Compiled")
+				ans = match_testcase_contest(out_testcase,compile_testcase,ans)
+				if ans==0:
+					break
+			else:
+				print("Error")
+				ans=0
+				break
+		except subprocess.TimeoutExpired:
+			print('Timeout',"hi")
+			return HttpResponse("TLE Timeout",datetime.now() - startTime)
+	if ans==0:
+		return ans
+	else:
+		return ans
+
+
+
 
 #check whether code is safe to run
 def is_safe(input_check, language):
