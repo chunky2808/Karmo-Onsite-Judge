@@ -31,8 +31,6 @@ from datetime import datetime
 
 
 
-
-
 language = {'python' : '.py','Python' : '.py', 'C++' : '.cpp' ,'C' : '.c'}
 
 @login_required(login_url='/users/login/')
@@ -265,7 +263,10 @@ def testcase_main(request,pk,pkk):
 					default_storage.save(folder + '/Output'+'/o' + '%s'%str(test.id) + ".txt", ContentFile(files.read()))
 					Testcase.objects.filter(id = test.id).update(outp =(folder2 + '/Output' + '/o' + '%s'%str(test.id)  +".txt") )
 				f = f+1	
-	return HttpResponse("Uploaded Successfully")	
+	if f==0:
+		return HttpResponse("Not uploaded test cases only .txt files allowed")
+	else:			
+		return HttpResponse("Uploaded Successfully")	
 #Upload Input,Output Testcase for a question in a particular contest
 
 
@@ -341,11 +342,24 @@ def submit_problem_contest(request,pk,pkk):
 			if not os.path.exists(compile_folder_path):
 				os.makedirs(compile_folder_path, 0o777)
 
-			file2write=open(compile_folder_path + '/%s'%nam + '%s'%p + '.cpp','w')
-			file2write.write(code.code)
-			file2write.close()
-			file_path = compile_folder_path +'/%s'%nam + '%s'%p + '.cpp'
 			if code.language=='c++' or code.language=='C++':
+				file2write=open(compile_folder_path + '/%s'%nam + '%s'%p + '.cpp','w')
+				file2write.write(code.code)
+				file2write.close()
+				file_path = compile_folder_path +'/%s'%nam + '%s'%p + '.cpp'
+			elif code.language=='python' or code.language=='Python':
+				file2write=open(compile_folder_path + '/%s'%nam + '%s'%p + '.py','w')
+				file2write.write(code.code)
+				file2write.close()
+				file_path = compile_folder_path +'/%s'%nam + '%s'%p + '.py'
+			elif code.language=='C' or code.language=='c':
+				file2write=open(compile_folder_path + '/%s'%nam + '%s'%p + '.c','w')
+				file2write.write(code.code)
+				file2write.close()
+				file_path = compile_folder_path +'/%s'%nam + '%s'%p + '.c'
+
+			
+			if code.language=='c++' or code.language=='C++' or code.language=='C' or code.language=='c':
 				compile_folder_path_input = compile_folder_path + '/Input'
 				if not os.path.exists(compile_folder_path_input):
 					os.makedirs(compile_folder_path_input, 0o777)
@@ -355,11 +369,14 @@ def submit_problem_contest(request,pk,pkk):
 					os.makedirs(compile_folder_path_output, 0o777)
 				#cmd = 'g++ %s'%file_path +" -o "+ compile_folder_path +'/%s'%nam + '%s'%p + '.out'
 				temp_out =  compile_folder_path +'/%s'%nam + '%s'%p + '.out'
-				cmd = ['g++',file_path,"-o",temp_out]
+				if code.language=='C' or code.language=='c':
+					cmd = ['gcc',file_path,"-o",temp_out]
+				else:	
+					cmd = ['g++',file_path,"-o",temp_out]
 
 				path_to_send = compile_folder_path +'/%s'%nam + '%s'%p + '.out'
 				try:
-					status = subprocess.run(cmd, timeout=1)
+					status = subprocess.run(cmd, timeout=1.1)
 					if status.returncode==0:
 						print("Running Successfully")
 						ans =0	
@@ -389,8 +406,35 @@ def submit_problem_contest(request,pk,pkk):
 					
 				except subprocess.TimeoutExpired:
 					print('Timeout')
-					return HttpResponse("TLE Timeout",datetime.now() - startTime)
+					return HttpResponse("TLE Timeout",datetime.now() - startTime)	
+			
+			elif code.language=='python' or code.language=='Python':
+				compile_folder_path_input = compile_folder_path + '/Input'
+				if not os.path.exists(compile_folder_path_input):
+					os.makedirs(compile_folder_path_input, 0o777)
 
+				compile_folder_path_output = compile_folder_path + '/Output'
+				if not os.path.exists(compile_folder_path_output):
+					os.makedirs(compile_folder_path_output, 0o777)
+				path_to_send  = file_path	
+				#cmd = 'g++ %s'%file_path +" -o "+ compile_folder_path +'/%s'%nam + '%s'%p + '.out'
+				print(path_to_send,contest,question,path_to_question,compile_folder_path)
+				ans =	python_run(path_to_send,contest,question,path_to_question,compile_folder_path)
+				print("paras",ans)
+				if ans==0:
+					return HttpResponse("WA")
+				elif ans!=1:
+					return HttpResponse("TLE")	
+				else:
+					print(datetime.now() - startTime)
+					user = request.user
+					end_time = datetime.now();
+					Submit_Question.objects.create(user=user,contest=contest,question=question,verdict=1,start_time = startTime,end_time=datetime.now())
+					
+					return HttpResponse("AC",datetime.now() - startTime)
+					
+			else:	
+				return HttpResponse("Language Not Supported")
 
 				
 
@@ -403,7 +447,6 @@ def generate_input_contest(path_to_send,contest,question,path_to_question,compil
 	startTime = datetime.now()
 	testcase = Testcase.objects.filter(contest=contest,question=question)
 	
-	#path_to_send = /home/paras/Desktop/coding/my-project/Judge/Contest/Algofuzz18.1/Divisor4/code_compile/demo70/demo70.out
 	ans =0
 	for testcase in testcase:
 		print(testcase.inpt)
@@ -458,6 +501,7 @@ def match_testcase_contest(output_path,compile_path,ans):
 
 @login_required(login_url='/users/login/')
 #Function to run file
+
 def run_file():
 	#running	
 	print("hi")
@@ -475,11 +519,46 @@ def run_file():
 
 	print("Time taken in Judging")
 	print(datetime.now() - startTime)
-	#running
 
-#Function to run file
 
 def ranking(request,pk):
 	submission = Submit_Question.objects.filter(contest=pk,verdict=1).order_by('time')
 	print(submission)
 	return render(request,'ranking.html',{'submission':submission})
+
+
+def python_run(path_to_send,contest,question,path_to_question,compile_folder_path):
+	startTime = datetime.now()
+	testcase = Testcase.objects.filter(contest=contest,question=question)
+	ans =0
+	for testcase in testcase:
+		print("gggg")
+		name_out = testcase.outp.split('/')[-1]
+		temp_out = '%s'%compile_folder_path + '/Output/%s'%name_out
+		temp_out2 = '%s'%BASE_DIR + '%s'%testcase.inpt
+		myinput = open(temp_out2)
+		myoutput = open(temp_out,"w")
+		cmd = ["python",path_to_send]
+		out_testcase = '%s'%BASE_DIR + '%s'%testcase.outp 
+		compile_testcase = '%s'%compile_folder_path + '/Output/%s'%name_out
+	#	print("this",out_testcase,compile_testcase)
+
+		try:
+			p = subprocess.run(cmd,timeout=4,stdin=myinput,stdout = myoutput)
+			if p.returncode==0:
+				print("Successfully Compiled")
+				ans = match_testcase_contest(out_testcase,compile_testcase,ans)
+				if ans==0:
+					break
+			else:
+				print("Error")
+				ans=0
+				break
+		except subprocess.TimeoutExpired:
+			print('Timeout',"hi")
+			return HttpResponse("TLE Timeout",datetime.now() - startTime)
+	if ans==0:
+		return ans
+	else:
+		return ans	
+
