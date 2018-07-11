@@ -1,6 +1,15 @@
 from django import forms
 from .models import Contest,Question,Code_Snippet
 
+Languages= [
+    ('c++','C++'),
+    ('c++ 14','C++ 14'),
+    ('c','C'),
+    ('python2','Python2'), 
+    ('python3','Python3'),
+    ('java','Java'),
+    ]
+
 class NewTopicForm(forms.ModelForm):
     class Meta:
         model = Contest
@@ -14,7 +23,9 @@ class NewTopicForm2(forms.ModelForm):
 
 
 class NewTopicForm3(forms.ModelForm):
-    class Meta:
-        model = Code_Snippet
-        fields = ['code','language']
+	code = forms.CharField(widget=forms.Textarea(attrs={'cols': 200, 'rows': 50}))
+	language= forms.CharField(label='Language', widget=forms.Select(choices=Languages))
+	class Meta:
+		model = Code_Snippet
+		fields = ['code','language']
 

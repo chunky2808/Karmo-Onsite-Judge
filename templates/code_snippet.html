@@ -3,9 +3,13 @@
 </head>
 <body>
   <form method="post">
+  	<table>
     {% csrf_token %}
     {{ form.as_p }}
+    <tr colspan=2>
     <button type="submit" class="btn btn-success">Post</button>
+</tr>
+</table>
   </form>
 	
 </body>
