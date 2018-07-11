@@ -16,3 +16,7 @@ Ranking Model.
 Form to upload Solution of question in Contest.
 Develop Permission for Ranking Model.
 
+
+Working for C,c++,c++14,python2,python3.
+DOne unsafe code checking.
+

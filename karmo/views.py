@@ -330,6 +330,8 @@ def submit_problem_contest(request,pk,pkk):
 			p = new.id
 			code = Code_Snippet.objects.get(id = p)
 			print(code.code)
+			if is_safe(code.code,code.language)==False:
+				return HttpResponse("We find something Malicious in your code .Please Contact Admin.")
 			print(code.language)
 			dir_path = BASE_DIR + '/Contest/%s'%contest.Name + '/%s'%question.Name +'/code_compile'
 
@@ -565,3 +567,20 @@ def python_run(path_to_send,contest,question,path_to_question,compile_folder_pat
 	else:
 		return ans	
 
+#check whether code is safe to run
+def is_safe(input_check, language):
+    input_check = input_check.lower()
+
+    if 'python3' in lang or 'python2' in lang or 'Python3' in lang or 'Python3' in lang:
+        if 'import os' in input_check or 'system(' in input_check or 'popen' in input_check or 'subprocess' in input_check:
+            return False
+        else:
+            return True
+    elif lang == 'java' or lang == 'Java':
+        if '.getruntime(' in input_check or 'processbuilder(' in input_check:
+            return False
+        else:
+            return True
+    elif 'subprocess' in input_check or'fopen(' in input_check or 'open(' in input_check :
+        return False
+    return True

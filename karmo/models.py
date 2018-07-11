@@ -71,3 +71,16 @@ class User_score(models.Model):
 	user = models.ForeignKey(User,related_name='user_y')
 	score = models.IntegerField(default=0)
 	
+class Category(models.Model):
+    name = models.CharField(max_length=100,default='Student')
+
+    def __str__(self):
+        return self.name
+
+
+class Karmouser(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+   
+    def __str__(self):
+        return self.user.username
