@@ -436,12 +436,15 @@ def submit_problem_contest(request,pk,pkk):
 							user = request.user
 							end_time = datetime.now();
 							q = Submit_Question.objects.filter(user=user,contest=contest,question=question,verdict=1)
-							if q=='NONE':
+							print("query",q)
+							if not q:
 								Submit_Question.objects.create(user=user,contest=contest,question=question,verdict=1,start_time = startTime,end_time=datetime.now())
-								score,created = User_score.objects.get_or_create(user=request.user)
+								score,created = User_score.objects.get_or_create(user=request.user,contest=contest)
 								#print(score,created)
-								User_score.objects.filter(user=request.user).update(score = score + 1)
-								User_score.objects.filter(user=request.user).update(time = end_time+time)
+								score = User_score.objects.get(user=request.user,contest=contest)
+								score = score.score +1
+								User_score.objects.filter(user=request.user,contest=contest).update(score =score)
+								#User_score.objects.filter(user=request.user,contest=contest).update(time = end_time+time)
 								
 							return HttpResponse("AC",datetime.now() - startTime)
 					else:
@@ -474,8 +477,18 @@ def submit_problem_contest(request,pk,pkk):
 					print(datetime.now() - startTime)
 					user = request.user
 					end_time = datetime.now();
-					Submit_Question.objects.create(user=user,contest=contest,question=question,verdict=1,start_time = startTime,end_time=datetime.now())
-					
+					user = request.user
+					end_time = datetime.now();
+					q = Submit_Question.objects.filter(user=user,contest=contest,question=question,verdict=1)
+					print("query",q)
+					if not q:
+						Submit_Question.objects.create(user=user,contest=contest,question=question,verdict=1,start_time = startTime,end_time=datetime.now())
+						score,created = User_score.objects.get_or_create(user=request.user,contest=contest)
+						#print(score,created)
+						score = User_score.objects.get(user=request.user,contest=contest)
+						score = score.score +1
+						User_score.objects.filter(user=request.user,contest=contest).update(score =score)
+
 					return HttpResponse("AC",datetime.now() - startTime)
 			
 			elif code.language=='java' or code.language=='Java' or code.language=='Java 8' or code.language=='java 8':
@@ -505,14 +518,17 @@ def submit_problem_contest(request,pk,pkk):
 							print(datetime.now() - startTime)
 							user = request.user
 							end_time = datetime.now();
-							Submit_Question.objects.create(user=user,contest=contest,question=question,verdict=1,start_time = startTime,end_time=datetime.now())
-							# score,created = User_score.objects.get_or_create(user=request.user)
-							# if created:
-							# timee=end_time-startTime
-							# print(('%02d:%02d.%d'%(timee.days,timee.seconds,timee.microseconds))[:-4])
-							# if(end_time-startTime > 0:01:00.000000):
-							# 	return HttpResponse("TLE",end_time-startTime)
-
+							user = request.user
+							end_time = datetime.now();
+							q = Submit_Question.objects.filter(user=user,contest=contest,question=question,verdict=1)
+							print("query",q)
+							if not q:
+								Submit_Question.objects.create(user=user,contest=contest,question=question,verdict=1,start_time = startTime,end_time=datetime.now())
+								score,created = User_score.objects.get_or_create(user=request.user,contest=contest)
+								#print(score,created)
+								score = User_score.objects.get(user=request.user,contest=contest)
+								score = score.score +1
+								User_score.objects.filter(user=request.user,contest=contest).update(score =score)
 							return HttpResponse("AC",datetime.now() - startTime)
 					else:
 						print("Compilation Error")
@@ -614,7 +630,7 @@ def run_file():
 
 
 def ranking(request,pk):
-	submission = Submit_Question.objects.filter(contest=pk,verdict=1).order_by('start_time').distinct()
+	#submission = Submit_Question.objects.filter(contest=pk,verdict=1).order_by('start_time').distinct()
 	submission = User_score.objects.filter(contest=pk).order_by('-score','time')
 	print(submission)
 	return render(request,'ranking.html',{'submission':submission})
