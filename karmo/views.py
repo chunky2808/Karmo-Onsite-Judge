@@ -1,16 +1,16 @@
 from django.shortcuts import render
 import subprocess
+from subprocess import STDOUT, check_output
 from .models import Contest,Question,Testcase,Submit_Question
-from datetime import datetime
 from .forms import NewTopicForm,NewTopicForm2,NewTopicForm3
 from django.http import HttpResponse, HttpResponseNotFound
 import os
 from django.views.decorators.csrf import csrf_exempt
 from .models import Code_Snippet
 from src.settings import *
+from subprocess import STDOUT, check_output
 
 from django.core.files.base import ContentFile
-
 
 from django.core.files.storage import default_storage
 
@@ -18,51 +18,68 @@ import random, string
 
 from django.contrib.auth.decorators import login_required
 
-
-#g++ -o output_file input_file
-
 import os 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 print(BASE_DIR)
 
+from datetime import datetime
+
+
+#g++ -o output_file input_file
+#cmd = 'g++ working_input.cpp -o a.out' #compiling c++ program
+#cmd = './a.out < /home/paras/Desktop/coding/my-project/Judge/input.txt > result.txt' #running a c++ program(name of file)
+
+
+
+
+
+language = {'python' : '.py','Python' : '.py', 'C++' : '.cpp' ,'C' : '.c'}
 
 @login_required(login_url='/users/login/')
 #Compiling,Running file and taking input as a file and generating output in file result.txt
 #C++
 def hii(request):
-	
 	#compilation
-	cmd = 'g++ working_input.cpp -o a.out' #compiling c++ program
-	p = subprocess.call(cmd, shell=True)
-	#print(subprocess.check_output(cmd, shell=True))
-	if p==0:
-		print("Successfully running")
-	else:
-		print(subprocess.check_output(cmd, shell=True))
-		print("Error")
-	generate_input()
-	return HttpResponse("ok")
+	cmd = ['g++','/home/paras/Desktop/coding/my-project/Judge/working_input.cpp','-o','a.out']
 	
+	try:
+		p = subprocess.run(cmd,timeout=1)
+		print(p,"HI")
+		if p.returncode==0:
+			print("Successfully Compiled")
+		else:
+			print("Error")
+		return generate_input()
+	except subprocess.TimeoutExpired:
+		print('Timeout')
+		return HttpResponse("TLE Timeout",datetime.now() - startTime)
 
 
 def generate_input():
 	startTime = datetime.now()
-	cmd = './a.out < /home/paras/Desktop/coding/my-project/Judge/input.txt > result.txt' #running a c++ program(name of file)
-
+	print("hi")
+	cmd = './a.out'
 	#command to run code with input file ./test.exe input.txt
-	
-	p = subprocess.call(cmd, shell=True)
-	if p==0:
-		print("Successfully running")
-	else:
-		print(subprocess.check_output(cmd, shell=True))
-		print("Error")
 
-	print("Time taken in Judging")
-	print(datetime.now() - startTime)
+	try:
+		p = subprocess.run(cmd,timeout=1)
+		print(p,"HI")	
+		if p.returncode==0:
+			print("Successfully Compiled")
+		else:
+			print("Error")
+			return HttpResponse("Compilation Error")
+		print("Time taken in Judging")
+		print(datetime.now() - startTime)
+		return HttpResponse("Code Running",datetime.now() - startTime)
+	except subprocess.TimeoutExpired:
+		print('Timeout')
+		return HttpResponse("TLE Timeout",datetime.now() - startTime)
+
 	#running
 #C++
 #Compiling,Running file and taking input as a file and generating output in file result.txt
+
 
 
 
@@ -89,13 +106,14 @@ def hi(request):
 	#compilation
 	cmd = 'python Compile_error.py' 
 	p = subprocess.call(cmd, shell=True)
-	prin
 	#print(subprocess.check_output(cmd, shell=True))
 	if p==0:
 		print("Successfully running")
+		return HttpResponse("ok")
 	else:
-		print(subprocess.check_output(cmd, shell=True))
+		#print(subprocess.check_output(cmd, shell=True))
 		print("Error")
+		return HttpResponse("Compilation Error")
 
 
 #Python
@@ -311,6 +329,7 @@ def submit_problem_contest(request,pk,pkk):
 			p = new.id
 			code = Code_Snippet.objects.get(id = p)
 			print(code.code)
+			print(code.language)
 			dir_path = BASE_DIR + '/Contest/%s'%contest.Name + '/%s'%question.Name +'/code_compile'
 
 			path_to_question = BASE_DIR + '/Contest/%s'%contest.Name + '/%s'%question.Name
@@ -321,15 +340,12 @@ def submit_problem_contest(request,pk,pkk):
 			compile_folder_path = BASE_DIR + '/Contest/%s'%contest.Name + '/%s'%question.Name +'/code_compile/%s'%nam + '%s'%p
 			if not os.path.exists(compile_folder_path):
 				os.makedirs(compile_folder_path, 0o777)
+
 			file2write=open(compile_folder_path + '/%s'%nam + '%s'%p + '.cpp','w')
 			file2write.write(code.code)
 			file2write.close()
 			file_path = compile_folder_path +'/%s'%nam + '%s'%p + '.cpp'
 			if code.language=='c++' or code.language=='C++':
-				cmd = 'g++ %s'%file_path +" -o "+ compile_folder_path +'/%s'%nam + '%s'%p + '.out'
-				path_to_send = compile_folder_path +'/%s'%nam + '%s'%p + '.out'
-				status = subprocess.call(cmd, shell=True)
-
 				compile_folder_path_input = compile_folder_path + '/Input'
 				if not os.path.exists(compile_folder_path_input):
 					os.makedirs(compile_folder_path_input, 0o777)
@@ -337,21 +353,44 @@ def submit_problem_contest(request,pk,pkk):
 				compile_folder_path_output = compile_folder_path + '/Output'
 				if not os.path.exists(compile_folder_path_output):
 					os.makedirs(compile_folder_path_output, 0o777)
+				#cmd = 'g++ %s'%file_path +" -o "+ compile_folder_path +'/%s'%nam + '%s'%p + '.out'
+				temp_out =  compile_folder_path +'/%s'%nam + '%s'%p + '.out'
+				cmd = ['g++',file_path,"-o",temp_out]
 
-				if(status==1):
-					print("Compilation Error")
-					return HttpResponse("Compilation Error")
-				else:
-					print("Running Successfully")
-					ans =0	
-					ans =	generate_input_contest(path_to_send,contest,question,path_to_question,compile_folder_path)
-					if ans==0:
-						return HttpResponse("WA")
+				path_to_send = compile_folder_path +'/%s'%nam + '%s'%p + '.out'
+				try:
+					status = subprocess.run(cmd, timeout=1)
+					if status.returncode==0:
+						print("Running Successfully")
+						print("Running Successfully")
+						ans =0	
+						ans =	generate_input_contest(path_to_send,contest,question,path_to_question,compile_folder_path)
+						if ans==0:
+							return HttpResponse("WA")
+						else:
+							print(datetime.now() - startTime)
+							user = request.user
+							end_time = datetime.now();
+							Submit_Question.objects.create(user=user,contest=contest,question=question,verdict=1,start_time = startTime,end_time=datetime.now())
+							# score,created = User_score.objects.get_or_create(user=request.user)
+							# if created:
+							# timee=end_time-startTime
+							# print(('%02d:%02d.%d'%(timee.days,timee.seconds,timee.microseconds))[:-4])
+							# if(end_time-startTime > 0:01:00.000000):
+							# 	return HttpResponse("TLE",end_time-startTime)
+
+							return HttpResponse("AC",datetime.now() - startTime)
 					else:
-						print(datetime.now() - startTime)
-						user = request.user
-						Submit_Question.objects.create(user=user,contest=contest,question=question,verdict=1)
-						return HttpResponse("AC",datetime.now() - startTime)
+						print("Compilation Error")
+						return HttpResponse("Compilation Error")
+							
+					
+				except subprocess.TimeoutExpired:
+					print('Timeout')
+					return HttpResponse("TLE Timeout",datetime.now() - startTime)
+
+
+				
 
 
 	else:
@@ -368,24 +407,42 @@ def generate_input_contest(path_to_send,contest,question,path_to_question,compil
 		print(testcase.inpt)
 		name_out = testcase.outp.split('/')[-1]
 		#cmd = '/home/paras/Desktop/coding/my-project/Judge/Contest/Algofuzz18.1/Divisor4/code_compile/demo78/demo78.out < /home/paras/Desktop/coding/my-project/Judge/Contest/Algofuzz18.1/Divisor4/testcases/Input/i18.txt > result.txt'
-		cmd = '%s'%path_to_send + ' < ' '%s'%BASE_DIR + '%s'%testcase.inpt + ' > ' + '%s'%compile_folder_path + '/Output/%s'%name_out #running a c++ program(name of file)
+		#cmd = '%s'%path_to_send + ' < ' '%s'%BASE_DIR + '%s'%testcase.inpt + ' > ' + '%s'%compile_folder_path + '/Output/%s'%name_out #running a c++ program(name of file)
+		temp_out = '%s'%compile_folder_path + '/Output/%s'%name_out
+		temp_out2 = '%s'%BASE_DIR + '%s'%testcase.inpt
+		cmd = [path_to_send ,'<' ,temp_out2,'>',temp_out]
+		
 		out_testcase = '%s'%BASE_DIR + '%s'%testcase.outp 
 		compile_testcase = '%s'%compile_folder_path + '/Output/%s'%name_out
 		print("this",out_testcase,compile_testcase)
-		p = subprocess.call(cmd, shell=True)
-		if p==0:
-			ans = match_testcase_contest(out_testcase,compile_testcase,ans)
-			if ans==0:
+
+		try:
+			p = subprocess.run(cmd,timeout=1)
+			if p.returncode==0:
+				print("Successfully Compiled")
+				ans = match_testcase_contest(out_testcase,compile_testcase,ans)
+				if ans==0:
+					break
+			else:
+				print("Error")
+				ans=0
 				break
+		except subprocess.TimeoutExpired:
+			print('Timeout')
+			return HttpResponse("TLE Timeout",datetime.now() - startTime)
 	if ans==0:
 		return ans
 	else:
 		return ans	
 
 
+
 def match_testcase_contest(output_path,compile_path,ans):
 	cmd = "diff -w %s"%output_path + " %s"%compile_path
-	p = subprocess.call(cmd,shell=True)
+	try:
+		p = subprocess.call(cmd,shell=True)
+	except subprocess.TimeoutExpired(timeout=61):
+		print("hi")	
 	if p==0:
 		ans=1
 		return ans
@@ -422,6 +479,3 @@ def ranking(request,pk):
 	submission = Submit_Question.objects.filter(contest=pk,verdict=1).order_by('time')
 	print(submission)
 	return render(request,'ranking.html',{'submission':submission})
-
-
-

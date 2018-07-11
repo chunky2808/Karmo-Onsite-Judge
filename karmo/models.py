@@ -13,7 +13,7 @@ class Contest(models.Model):
 	language_accepted = models.TextField(max_length = 4000)
 	url_code  = models.TextField(null=True)
 	date = models.CharField(max_length=244)
-	score = models.CharField(max_length=244,default =100)
+	score = models.IntegerField(default = 0)
 
 	def __str__(self):
 		return self.Name
@@ -59,10 +59,15 @@ class Submit_Question(models.Model):#user model for submission of question
 	user = models.ForeignKey(User,related_name='submitted_by')
 	contest = models.ForeignKey(Contest,related_name='submit_contest')
 	question = models.ForeignKey(Question,related_name = 'submit_ques')
-	verdict = models.IntegerField(default = 0)
-	time = models.TimeField(default=datetime.datetime.now())
+	verdict = models.IntegerField(default = 0)#2 for TLE
+	start_time = models.TimeField(default=datetime.datetime.now().time())
+	end_time = models.TimeField(default=datetime.datetime.now().time())
 
 	def __unicode__(self):
 		return self.id
 
 		
+class User_score(models.Model):
+	user = models.ForeignKey(User,related_name='user_y')
+	score = models.IntegerField(default=0)
+	
