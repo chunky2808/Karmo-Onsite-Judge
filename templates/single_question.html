@@ -11,8 +11,9 @@
 	{{question.created_by}}<br>
 
 
-
+	{% if value == 1 %}	
 	<a href = "{% url 'testcase' contest.pk question.pk %}" ><button type="button" class="btn btn-primary">Upload TestCase</button></a>
+	{% endif %}
 
 	<a href = "{% url 'submit_contest' contest.pk question.pk %}" ><button type="button" class="btn btn-primary">Submit</button></a>
 

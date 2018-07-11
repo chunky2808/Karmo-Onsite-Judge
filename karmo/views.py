@@ -1,7 +1,7 @@
 from django.shortcuts import render
 import subprocess
 from subprocess import STDOUT, check_output
-from .models import Contest,Question,Testcase,Submit_Question
+from .models import Contest,Question,Testcase,Submit_Question,Karmouser,Category
 from .forms import NewTopicForm,NewTopicForm2,NewTopicForm3
 from django.http import HttpResponse, HttpResponseNotFound
 import os
@@ -154,6 +154,10 @@ def take_input(request):
 @login_required(login_url='/users/login/')
 @csrf_exempt
 def create_contest(request):
+	karmouser = Karmouser.objects.get(user=request.user)
+	if karmouser.category.name=='Student':
+		return render(request,'access_denied.html')
+
 	if request.method == 'POST':
 		form = NewTopicForm(request.POST)
 		if form.is_valid():
@@ -174,6 +178,9 @@ def create_contest(request):
 @login_required(login_url='/users/login/')
 @csrf_exempt
 def create_question(request):
+	karmouser = Karmouser.objects.get(user=request.user)
+	if karmouser.category.name=='Student':
+		return render(request,'access_denied.html')
 	if request.method == 'POST':
 		form = NewTopicForm2(request.POST)
 		if form.is_valid():
@@ -274,20 +281,28 @@ def testcase_main(request,pk,pkk):
 #For single question
 def question(request,pk,cont):
 	question = Question.objects.get(pk=pk)
+	karmouser = Karmouser.objects.get(user=request.user)
 	contest = Contest.objects.get(pk =cont)
+	val=0
+	if karmouser.category.name=='Coordinator':
+		val=1
 	print(contest)
 	print(question)
-	return render(request,'single_question.html',{'question':question,'contest':contest})
+	return render(request,'single_question.html',{'question':question,'contest':contest,'value':val})
 #For single question
 
 
 @login_required(login_url='/users/login/')
 #See all exsisting contests
 def exsisting_contest(request):
+	karmouser = Karmouser.objects.get(user=request.user)
+	val=0
+	if karmouser.category.name=='Coordinator':
+		val=1
 	print(request.META['HTTP_HOST'])
 	contest = Contest.objects.all()
 	print(contest)
-	return render(request,'exsisting_contest.html',{'contest':contest})
+	return render(request,'exsisting_contest.html',{'contest':contest,'value':val})
 #See all exsisting contests
 
 
@@ -300,7 +315,10 @@ def problem(request,pk):
 	contest = Contest.objects.filter(pk=pk)
 	question = Question.objects.filter(contest=pk)
 	user = request.user
-	
+	karmouser = Karmouser.objects.get(user=request.user)
+	val=0
+	if karmouser.category.name=='Coordinator':
+		val=1
 	solved_question = Submit_Question.objects.filter(user=user,contest=contest,question=question,verdict=1)
 	
 	my_set = set()
@@ -311,7 +329,7 @@ def problem(request,pk):
 
 	for contest in contest:
 		contests = contest
-	return render(request,'problem.html',{'contest':contests,'question':question,'my_set':my_set})
+	return render(request,'problem.html',{'contest':contests,'question':question,'my_set':my_set,'value':val})
 
 
 
@@ -571,12 +589,12 @@ def python_run(path_to_send,contest,question,path_to_question,compile_folder_pat
 def is_safe(input_check, language):
     input_check = input_check.lower()
 
-    if 'python3' in lang or 'python2' in lang or 'Python3' in lang or 'Python3' in lang:
+    if 'python3' in language or 'python2' in language or 'Python3' in language or 'Python3' in language:
         if 'import os' in input_check or 'system(' in input_check or 'popen' in input_check or 'subprocess' in input_check:
             return False
         else:
             return True
-    elif lang == 'java' or lang == 'Java':
+    elif language == 'java' or language == 'Java':
         if '.getruntime(' in input_check or 'processbuilder(' in input_check:
             return False
         else:

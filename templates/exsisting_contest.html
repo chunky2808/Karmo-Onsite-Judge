@@ -6,14 +6,16 @@
 		<br></br>
 		{% endfor %}
 
-
+	{% if value == 1 %}
 	<a href = "{% url 'create_contest' %}" ><button type="button" class="btn btn-primary">Create Contest</button></a>
-
+	{% endif %}
 
 	<a href = "{% url 'take_input' %}" ><button type="button" class="btn btn-primary">Submit</button></a>
 
-
+	{% if value == 1 %}
 	<a href = "{% url 'compile_test' %}" ><button type="button" class="btn btn-primary">Compile and Run</button></a>
+	{% endif %}
+
 	</body>
 </head>
 </html>

@@ -14,8 +14,9 @@
 		<br></br>
 		{% endfor %}
 		
-		
+	{% if value == 1 %}	
 	<a href = "{% url 'create_question' %}" ><button type="button" class="btn btn-primary">Create Question</button></a>
+	{% endif %}
 
 	<a href = "{% url 'ranking' contest.id %}" ><button type="button" class="btn btn-primary">Ranking</button></a>
 
