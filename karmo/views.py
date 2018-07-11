@@ -344,8 +344,12 @@ def submit_problem_contest(request,pk,pkk):
 		form = NewTopicForm3(request.POST)
 		if form.is_valid():
 			new = form.save(commit=False)
+			data = form.cleaned_data
+			name_of_file = data.get('Name_of_File')
+			name_of_file = name_of_file.split('.')[-2]
 			new.save()
 			p = new.id
+			print(name_of_file)
 			code = Code_Snippet.objects.get(id = p)
 			print(code.code)
 			if is_safe(code.code,code.language)==False:
@@ -382,10 +386,10 @@ def submit_problem_contest(request,pk,pkk):
 				file_path = compile_folder_path +'/%s'%nam + '%s'%p + '.c'
 
 			elif code.language=='Java' or code.language=='java':
-				file2write=open(compile_folder_path + '/main' + '.java','w')
+				file2write=open(compile_folder_path + '/%s'%name_of_file + '.java','w')
 				file2write.write(code.code)
 				file2write.close()
-				file_path = compile_folder_path +'/main' + '.java'
+				file_path = compile_folder_path +'/%s'%name_of_file + '.java'
 				compiled_file_path = compile_folder_path
 
 
@@ -481,7 +485,7 @@ def submit_problem_contest(request,pk,pkk):
 					if status.returncode==0:
 						print("Running Successfully")
 						ans =0	
-						ans =	java_run(path_to_send,contest,question,path_to_question,compile_folder_path,code.language)
+						ans =	java_run(path_to_send,contest,question,path_to_question,compile_folder_path,code.language,name_of_file)
 						print("paras",ans)
 						if ans==0:
 							return HttpResponse("WA")
@@ -645,7 +649,7 @@ def python_run(path_to_send,contest,question,path_to_question,compile_folder_pat
 		return ans	
 
 
-def java_run(path_to_send,contest,question,path_to_question,compile_folder_path,code_language):
+def java_run(path_to_send,contest,question,path_to_question,compile_folder_path,code_language,name_of_file):
 	startTime = datetime.now()
 	testcase = Testcase.objects.filter(contest=contest,question=question)
 	ans =0
@@ -658,7 +662,7 @@ def java_run(path_to_send,contest,question,path_to_question,compile_folder_path,
 		myoutput = open(temp_out,"w")
 		print("paras",path_to_send)
 		#subprocess.call('cd Contest',shell=True)
-		cmd = ["java","-cp",path_to_send,"main"]
+		cmd = ["java","-cp",path_to_send,name_of_file]
 		#cmd = ["ls","-l"]
 		out_testcase = '%s'%BASE_DIR + '%s'%testcase.outp 
 		compile_testcase = '%s'%compile_folder_path + '/Output/%s'%name_out

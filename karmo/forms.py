@@ -25,7 +25,8 @@ class NewTopicForm2(forms.ModelForm):
 class NewTopicForm3(forms.ModelForm):
 	code = forms.CharField(widget=forms.Textarea(attrs={'cols': 200, 'rows': 50}))
 	language= forms.CharField(label='Language', widget=forms.Select(choices=Languages))
+	Name_of_File = forms.CharField()
 	class Meta:
 		model = Code_Snippet
-		fields = ['code','language']
+		fields = ['code','language','Name_of_File']
 
