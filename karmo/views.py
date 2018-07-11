@@ -362,11 +362,13 @@ def submit_problem_contest(request,pk,pkk):
 					status = subprocess.run(cmd, timeout=1)
 					if status.returncode==0:
 						print("Running Successfully")
-						print("Running Successfully")
 						ans =0	
 						ans =	generate_input_contest(path_to_send,contest,question,path_to_question,compile_folder_path)
+						print("paras",ans)
 						if ans==0:
 							return HttpResponse("WA")
+						elif ans!=1:
+							return HttpResponse("TLE")	
 						else:
 							print(datetime.now() - startTime)
 							user = request.user
@@ -410,14 +412,16 @@ def generate_input_contest(path_to_send,contest,question,path_to_question,compil
 		#cmd = '%s'%path_to_send + ' < ' '%s'%BASE_DIR + '%s'%testcase.inpt + ' > ' + '%s'%compile_folder_path + '/Output/%s'%name_out #running a c++ program(name of file)
 		temp_out = '%s'%compile_folder_path + '/Output/%s'%name_out
 		temp_out2 = '%s'%BASE_DIR + '%s'%testcase.inpt
-		cmd = [path_to_send ,'<' ,temp_out2,'>',temp_out]
-		
+		myinput = open(temp_out2)
+		myoutput = open(temp_out,"w")
+		cmd = [path_to_send ]
+		print("hi",cmd,"hi")
 		out_testcase = '%s'%BASE_DIR + '%s'%testcase.outp 
 		compile_testcase = '%s'%compile_folder_path + '/Output/%s'%name_out
-		print("this",out_testcase,compile_testcase)
+	#	print("this",out_testcase,compile_testcase)
 
 		try:
-			p = subprocess.run(cmd,timeout=1)
+			p = subprocess.run(cmd,timeout=1,stdin=myinput,stdout = myoutput)
 			if p.returncode==0:
 				print("Successfully Compiled")
 				ans = match_testcase_contest(out_testcase,compile_testcase,ans)
@@ -428,7 +432,7 @@ def generate_input_contest(path_to_send,contest,question,path_to_question,compil
 				ans=0
 				break
 		except subprocess.TimeoutExpired:
-			print('Timeout')
+			print('Timeout',"hi")
 			return HttpResponse("TLE Timeout",datetime.now() - startTime)
 	if ans==0:
 		return ans
