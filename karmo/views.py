@@ -347,7 +347,7 @@ def submit_problem_contest(request,pk,pkk):
 				file2write.write(code.code)
 				file2write.close()
 				file_path = compile_folder_path +'/%s'%nam + '%s'%p + '.cpp'
-			elif code.language=='python' or code.language=='Python':
+			elif code.language=='python2' or code.language=='Python2' or code.language=='python3' or code.language=='Python3':
 				file2write=open(compile_folder_path + '/%s'%nam + '%s'%p + '.py','w')
 				file2write.write(code.code)
 				file2write.close()
@@ -359,7 +359,7 @@ def submit_problem_contest(request,pk,pkk):
 				file_path = compile_folder_path +'/%s'%nam + '%s'%p + '.c'
 
 			
-			if code.language=='c++' or code.language=='C++' or code.language=='C' or code.language=='c':
+			if code.language=='c++' or code.language=='C++' or code.language=='C' or code.language=='c'  or code.language=='C++ 14' or code.language=='c++ 14':
 				compile_folder_path_input = compile_folder_path + '/Input'
 				if not os.path.exists(compile_folder_path_input):
 					os.makedirs(compile_folder_path_input, 0o777)
@@ -372,11 +372,11 @@ def submit_problem_contest(request,pk,pkk):
 				if code.language=='C' or code.language=='c':
 					cmd = ['gcc',file_path,"-o",temp_out]
 				else:	
-					cmd = ['g++',file_path,"-o",temp_out]
+					cmd = ['g++','-std=c++14',file_path,"-o",temp_out]
 
 				path_to_send = compile_folder_path +'/%s'%nam + '%s'%p + '.out'
 				try:
-					status = subprocess.run(cmd, timeout=1.1)
+					status = subprocess.run(cmd, timeout=2.1)
 					if status.returncode==0:
 						print("Running Successfully")
 						ans =0	
@@ -408,7 +408,7 @@ def submit_problem_contest(request,pk,pkk):
 					print('Timeout')
 					return HttpResponse("TLE Timeout",datetime.now() - startTime)	
 			
-			elif code.language=='python' or code.language=='Python':
+			elif code.language=='python2' or code.language=='Python2' or code.language=='python3' or code.language=='Python3':
 				compile_folder_path_input = compile_folder_path + '/Input'
 				if not os.path.exists(compile_folder_path_input):
 					os.makedirs(compile_folder_path_input, 0o777)
@@ -419,7 +419,7 @@ def submit_problem_contest(request,pk,pkk):
 				path_to_send  = file_path	
 				#cmd = 'g++ %s'%file_path +" -o "+ compile_folder_path +'/%s'%nam + '%s'%p + '.out'
 				print(path_to_send,contest,question,path_to_question,compile_folder_path)
-				ans =	python_run(path_to_send,contest,question,path_to_question,compile_folder_path)
+				ans =	python_run(path_to_send,contest,question,path_to_question,compile_folder_path,code.language)
 				print("paras",ans)
 				if ans==0:
 					return HttpResponse("WA")
@@ -527,7 +527,7 @@ def ranking(request,pk):
 	return render(request,'ranking.html',{'submission':submission})
 
 
-def python_run(path_to_send,contest,question,path_to_question,compile_folder_path):
+def python_run(path_to_send,contest,question,path_to_question,compile_folder_path,code_language):
 	startTime = datetime.now()
 	testcase = Testcase.objects.filter(contest=contest,question=question)
 	ans =0
@@ -538,13 +538,16 @@ def python_run(path_to_send,contest,question,path_to_question,compile_folder_pat
 		temp_out2 = '%s'%BASE_DIR + '%s'%testcase.inpt
 		myinput = open(temp_out2)
 		myoutput = open(temp_out,"w")
-		cmd = ["python",path_to_send]
+		if code_language=='python2' or code_language=='Python2':
+			cmd = ["python2",path_to_send]
+		else:
+			cmd = ["python3",path_to_send]
 		out_testcase = '%s'%BASE_DIR + '%s'%testcase.outp 
 		compile_testcase = '%s'%compile_folder_path + '/Output/%s'%name_out
 	#	print("this",out_testcase,compile_testcase)
 
 		try:
-			p = subprocess.run(cmd,timeout=4,stdin=myinput,stdout = myoutput)
+			p = subprocess.run(cmd,timeout=5.5,stdin=myinput,stdout = myoutput)
 			if p.returncode==0:
 				print("Successfully Compiled")
 				ans = match_testcase_contest(out_testcase,compile_testcase,ans)
