@@ -1,7 +1,7 @@
 from django.shortcuts import render
 import subprocess
 from subprocess import STDOUT, check_output
-from .models import Contest,Question,Testcase,Submit_Question,Karmouser,Category
+from .models import Contest,Question,Testcase,Submit_Question,Karmouser,Category,User_score
 from .forms import NewTopicForm,NewTopicForm2,NewTopicForm3
 from django.http import HttpResponse, HttpResponseNotFound
 import os
@@ -238,6 +238,16 @@ def create_question(request):
 
 
 @login_required(login_url='/users/login/')
+@csrf_exempt
+def edit_question(request,pk,pkk):
+	question = Question.objects.get(pk=pkk)
+	form = NewTopicForm2(request.POST or None,instance = question)
+	if form.is_valid():
+		form.save()
+		return HttpResponse("Question has been changed")
+	return render(request, 'create_question.html', {'form': form}) 
+
+@login_required(login_url='/users/login/')
 #Upload Input,Output Testcase for a question in a particular contest
 def testcase(request,pk,pkk):
 	question = Question.objects.get(pk=pkk)
@@ -367,7 +377,7 @@ def submit_problem_contest(request,pk,pkk):
 			if not os.path.exists(compile_folder_path):
 				os.makedirs(compile_folder_path, 0o777)
 
-			if code.language=='c++' or code.language=='C++':
+			if code.language=='c++' or code.language=='C++' or code.language=='c++ 14' or code.language=='C++ 14':
 				file2write=open(compile_folder_path + '/%s'%nam + '%s'%p + '.cpp','w')
 				file2write.write(code.code)
 				file2write.close()
@@ -385,7 +395,7 @@ def submit_problem_contest(request,pk,pkk):
 				file2write.close()
 				file_path = compile_folder_path +'/%s'%nam + '%s'%p + '.c'
 
-			elif code.language=='Java' or code.language=='java':
+			elif code.language=='Java' or code.language=='java' or code.language=='Java 8' or code.language=='java 8':
 				file2write=open(compile_folder_path + '/%s'%name_of_file + '.java','w')
 				file2write.write(code.code)
 				file2write.close()
@@ -425,14 +435,14 @@ def submit_problem_contest(request,pk,pkk):
 							print(datetime.now() - startTime)
 							user = request.user
 							end_time = datetime.now();
-							Submit_Question.objects.create(user=user,contest=contest,question=question,verdict=1,start_time = startTime,end_time=datetime.now())
-							# score,created = User_score.objects.get_or_create(user=request.user)
-							# if created:
-							# timee=end_time-startTime
-							# print(('%02d:%02d.%d'%(timee.days,timee.seconds,timee.microseconds))[:-4])
-							# if(end_time-startTime > 0:01:00.000000):
-							# 	return HttpResponse("TLE",end_time-startTime)
-
+							q = Submit_Question.objects.filter(user=user,contest=contest,question=question,verdict=1)
+							if q=='NONE':
+								Submit_Question.objects.create(user=user,contest=contest,question=question,verdict=1,start_time = startTime,end_time=datetime.now())
+								score,created = User_score.objects.get_or_create(user=request.user)
+								#print(score,created)
+								User_score.objects.filter(user=request.user).update(score = score + 1)
+								User_score.objects.filter(user=request.user).update(time = end_time+time)
+								
 							return HttpResponse("AC",datetime.now() - startTime)
 					else:
 						print("Compilation Error")
@@ -468,7 +478,7 @@ def submit_problem_contest(request,pk,pkk):
 					
 					return HttpResponse("AC",datetime.now() - startTime)
 			
-			elif code.language=='java' or code.language=='Java':
+			elif code.language=='java' or code.language=='Java' or code.language=='Java 8' or code.language=='java 8':
 				compile_folder_path_input = compile_folder_path + '/Input'
 				if not os.path.exists(compile_folder_path_input):
 					os.makedirs(compile_folder_path_input, 0o777)
@@ -604,7 +614,8 @@ def run_file():
 
 
 def ranking(request,pk):
-	submission = Submit_Question.objects.filter(contest=pk,verdict=1).order_by('start_time')
+	submission = Submit_Question.objects.filter(contest=pk,verdict=1).order_by('start_time').distinct()
+	submission = User_score.objects.filter(contest=pk).order_by('-score','time')
 	print(submission)
 	return render(request,'ranking.html',{'submission':submission})
 
@@ -669,7 +680,7 @@ def java_run(path_to_send,contest,question,path_to_question,compile_folder_path,
 	#	print("this",out_testcase,compile_testcase)
 
 		try:
-			p = subprocess.run(cmd,timeout=3,stdin=myinput,stdout = myoutput)
+			p = subprocess.run(cmd,timeout=.5,stdin=myinput,stdout = myoutput)
 			if p.returncode==0:
 				print("Successfully Compiled")
 				ans = match_testcase_contest(out_testcase,compile_testcase,ans)

@@ -70,7 +70,12 @@ class Submit_Question(models.Model):#user model for submission of question
 class User_score(models.Model):
 	user = models.ForeignKey(User,related_name='user_y')
 	score = models.IntegerField(default=0)
+	contest = models.ForeignKey(Contest,related_name='submit_contestt',default=1)
+	time = models.TimeField(default=datetime.datetime.now().time())
 	
+	def __unicode__(self):
+		return self.id
+
 class Category(models.Model):
     name = models.CharField(max_length=100,default='Student')
 

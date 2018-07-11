@@ -8,6 +8,7 @@ Languages= [
     ('python2','Python2'), 
     ('python3','Python3'),
     ('java','Java'),
+    ('java 8','Java 8')
     ]
 
 class NewTopicForm(forms.ModelForm):
