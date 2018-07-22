@@ -24,8 +24,10 @@ The Judge currently accepts submission in following languages:
   
 2) Added Bug-checker to check for malicious code/virus.
 
-3) Provides three categories- User,Coordinator,Admin
+3) Provides three categories- User,Coordinator,Admin.
+
 User-can view contests,submit question on contest,compile and test,view ranklist.
+
 Coordinator- can add problem for particular contest with testcase and solution
 Admin - can create,delete contest,user account and questions.
 
