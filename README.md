@@ -28,11 +28,12 @@ The Judge currently accepts submission in following languages:
 
 User-can view contests,submit question on contest,compile and test,view ranklist.
 
-Coordinator- can add problem for particular contest with testcase and solution
+Coordinator- can add problem for particular contest with testcase and solution.
+
 Admin - can create,delete contest,user account and questions.
 
-
 # To run
+
 1) Clone the project
 
 2) run python manage.py makemigrations
