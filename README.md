@@ -41,3 +41,6 @@ Admin - can create,delete contest,user account and questions.
 3) run python manage.py migrate
 
 4) run python manage.py runserver to run the web app.
+
+# More info
+Visit : https://www.geeksforgeeks.org/project-idea-onsite-judge/
