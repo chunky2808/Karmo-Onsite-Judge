@@ -32,6 +32,63 @@ from datetime import datetime
 
 
 language = {'python' : '.py','Python' : '.py', 'C++' : '.cpp' ,'C' : '.c'}
+@login_required(login_url='/users/login/')
+#GIves compilation result for a code
+@csrf_exempt
+def take_input(request):
+	if request.method == 'POST':
+		form = NewTopicForm3(request.POST)
+		if form.is_valid():
+			new = form.save(commit=False)
+			new.save()
+			p = new.id
+			code = Code_Snippet.objects.get(id = p)
+			print(code.code)
+			dir_path = BASE_DIR + '/code_compile'
+			if not os.path.exists(dir_path):
+				os.makedirs(dir_path, 0o777)
+			file2write=open(BASE_DIR + '/code_compile/%s.cpp'%p,'w')
+			file2write.write(code.code)
+			file2write.close()
+			file_path = BASE_DIR + '/code_compile/%s.cpp'%p
+			if code.language=='c++' or code.language=='C++':
+				cmd = 'g++ %s'%file_path
+				status = subprocess.call(cmd, shell=True)
+				if(status==1):
+					print("Compilation Error")
+					return HttpResponse("Compilation Error")
+				else:
+					print("Running Successfully")	
+					return HttpResponse("Running Successfully")
+	else:
+		form = NewTopicForm3()
+	return render(request, 'code_snippet.html', {'form' : form})
+#GIves compilation result for a code
+
+
+@login_required(login_url='/users/login/')
+@csrf_exempt
+def create_contest(request):
+	karmouser = Karmouser.objects.get(user=request.user)
+	if karmouser.category.name=='Student':
+		return render(request,'access_denied.html')
+
+	if request.method == 'POST':
+		form = NewTopicForm(request.POST)
+		if form.is_valid():
+			new = form.save(commit=False)
+			print(request.user)
+			new.created_by = request.user
+			cmd = 'mkdir %s'%BASE_DIR + '/Contest'+ '/%s'%new.Name#create folder for contest Name
+			print(cmd)
+			subprocess.call(cmd, shell=True)
+
+			new.save()
+			return HttpResponse("Contest created Successfully")
+	else:
+		form = NewTopicForm()
+	return render(request, 'create_contest.html', {'form' : form})
+
 
 @login_required(login_url='/users/login/')
 #Compiling,Running file and taking input as a file and generating output in file result.txt
