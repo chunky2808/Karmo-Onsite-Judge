@@ -5,19 +5,19 @@ import subprocess
 '''
 working compilation
 '''
-# cmd = 'g++'
-# cmd2= '/home/paras/Desktop/coding/my-project/Judge/working_input.cpp'
-# cmd3 = './a.out'
-# out =open("/home/paras/Desktop/coding/my-project/Judge/out04.txt","wb")
-# process = Popen([cmd3], stdout=out, stderr=PIPE)
-# try:
-# 	stdout, stderr = process.communicate(timeout=1)
-# 	print(stderr)
-# except subprocess.CalledProcessError as e:
-# 	print(e)
-# 	print(process.returncode)
+cmd = 'g++'
+cmd2= '/home/paras/Desktop/coding/my-project/Judge/working_input.cpp'
+cmd3 = './a.out'
+out =open("/home/paras/Desktop/coding/my-project/Judge/out04.txt","wb")
+process = Popen([cmd3], stdout=out, stderr=PIPE)
+try:
+	stdout, stderr = process.communicate(timeout=1)
+	print(stderr)
+except subprocess.CalledProcessError as e:
+	print(e)
+	print(process.returncode)
 
-# print(process.returncode)
+print(process.returncode)
 
 myinput = open('/home/paras/Desktop/coding/my-project/Judge/Contest/Algofuzz18.1/Divisor4/testcases/Input/i19.txt')
 myoutput = open('/home/paras/Desktop/coding/my-project/Judge/Contest/Algofuzz18.1/Divisor4/code_compile/demo171/Output/o19.txt', 'w')
