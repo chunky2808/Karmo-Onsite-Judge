@@ -78,7 +78,30 @@ def generate_input():
 #C++
 #Compiling,Running file and taking input as a file and generating output in file result.txt
 
+def generate_input_2():
+	startTime = datetime.now()
+	print("hi")
+	cmd = './a.out'
+	#command to run code with input file ./test.exe input.txt
 
+	try:
+		p = subprocess.run(cmd,timeout=1)
+		print(p,"HI")	
+		if p.returncode==0:
+			print("Successfully Compiled")
+		else:
+			print("Error")
+			return HttpResponse("Compilation Error")
+		print("Time taken in Judging")
+		print(datetime.now() - startTime)
+		return HttpResponse("Code Running",datetime.now() - startTime)
+	except subprocess.TimeoutExpired:
+		print('Timeout')
+		return HttpResponse("TLE Timeout",datetime.now() - startTime)
+
+	#running
+#C++
+#Compiling,Running file and taking input as
 
 
 @login_required(login_url='/users/login/')
@@ -314,6 +337,31 @@ def exsisting_contest(request):
 	print(contest)
 	return render(request,'exsisting_contest.html',{'contest':contest,'value':val})
 #See all exsisting contests
+
+
+
+@login_required(login_url='/users/login/')
+@csrf_exempt
+def create_contest_2(request):
+	karmouser = Karmouser.objects.get(user=request.user)
+	if karmouser.category.name=='Student':
+		return render(request,'access_denied.html')
+
+	if request.method == 'POST':
+		form = NewTopicForm(request.POST)
+		if form.is_valid():
+			new = form.save(commit=False)
+			print(request.user)
+			new.created_by = request.user
+			cmd = 'mkdir %s'%BASE_DIR + '/Contest'+ '/%s'%new.Name#create folder for contest Name
+			print(cmd)
+			subprocess.call(cmd, shell=True)
+
+			new.save()
+			return HttpResponse("Contest created Successfully")
+	else:
+		form = NewTopicForm()
+	return render(request, 'create_contest.html', {'form' : form})
 
 
 #To display all questions
