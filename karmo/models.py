@@ -66,7 +66,21 @@ class Submit_Question(models.Model):#user model for submission of question
 	def __unicode__(self):
 		return self.id
 
-		
+	class Contest2(models.Model):
+	Name = models.TextField(max_length=4000,unique=True)
+	Desc = models.TextField(max_length = 4000)
+	Timings = models.CharField(max_length=244)
+	created_by = models.ForeignKey(User,related_name = 'cont_created_by')
+	language_accepted = models.TextField(max_length = 4000)
+	url_code  = models.TextField(null=True)
+	date = models.CharField(max_length=244)
+	score = models.IntegerField(default = 0)
+
+	def __str__(self):
+		return self.Name
+
+	def __unicode__(self):
+		return self.Name.replace('_', ' ')	
 class User_score(models.Model):
 	user = models.ForeignKey(User,related_name='user_y')
 	score = models.IntegerField(default=0)
@@ -89,3 +103,10 @@ class Karmouser(models.Model):
    
     def __str__(self):
         return self.user.username
+
+
+class Student(models.Model):
+    name = models.CharField(max_length=100,default='Student')
+
+    def __str__(self):
+        return self.name
